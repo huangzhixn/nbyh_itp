@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.sunyard.itp.mapper.WftMapper">
+	<delete id="delete">
+		delete from TBL_WFT_PARAMS
+		WHERE 1 = 1
+	</delete>
+	
+	<insert id="add" parameterType="WftPara">
+		insert into TBL_WFT_PARAMS
+		(NO,PARAMS)
+		values
+		(#{no},#{params})
+	</insert>
+	
+	<select id="query" resultType="java.lang.String" parameterType="java.lang.String">
+		select PARAMS from TBL_WFT_PARAMS
+	
+	</select>
+	<update id="updateTrade" parameterType="TransFlow">
+		update TBL_TRANS_FLW set
+		TRADE_NO=#{tradeNo},BUYER_LOGON_ID=#{buyerLogonId},TRADE_STATUS=#{tradeStatus},RECEIPT_AMOUNT=#{receiptAmount},
+		TOTAL_AMOUNT=#{totalAmount},SEND_PAY_DATE=#{sendPayDate},BUYER_USER_ID=#{buyerUserId}
+		where
+		OUT_TRADE_NO = #{outTradeNo}
+	</update>
+	
+
+</mapper>

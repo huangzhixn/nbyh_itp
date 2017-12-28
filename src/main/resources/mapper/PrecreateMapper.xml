@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.sunyard.itp.mapper.PrecreateMapper">
+	<insert id="addWxPerParams" parameterType="WxPerParams">
+		insert into TBL_WXPER_PAM
+		(PRODUCT_ID,OUT_TRADE_NO,BODY,TATOL_FEE)
+		values
+		(#{productId},#{outTradeNo},#{body},#{totalFee})
+	</insert>
+	
+	<select id="queryWxPerParams" parameterType="java.lang.String" resultType="WxPerParams">
+		select * from TBL_WXPER_PAM
+		where
+		PRODUCT_ID = #{productId}
+	</select>
+	
+	
+
+</mapper>
