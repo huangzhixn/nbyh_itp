@@ -26,9 +26,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONObject;
+import com.sunyard.itp.constant.CommonConst;
 import com.sunyard.itp.constant.PayConst;
+import com.sunyard.itp.entity.Message;
 import com.sunyard.itp.entity.PrecreateParams;
 import com.sunyard.itp.entity.TradePayParams;
 import com.sunyard.itp.service.PrecreateService;
@@ -137,55 +140,63 @@ public class PayController {
 	 * @date 2017年7月27日 上午10:56:32
 	 */
 	@RequestMapping("/tradePay")
+	@ResponseBody
 	public String tradePay(TradePayParams tradePayParams,ModelMap modelMap) throws Exception{
-		String res = tradePayService.tradePay(tradePayParams);
+		Message message;
+		try {
+			message = tradePayService.tradePay(tradePayParams);
+		} catch (Exception e) {
+			logger.debug(e.getMessage());
+			return CommonConst.getResult(CommonConst.RET_FAIL, "系统错误");
+		}
+		return CommonConst.getResult(CommonConst.RET_SUCCESS, message);
 //		modelMap.addAttribute("resultCode", res);
 //		if(res.indexOf("成功") != -1){
 //			return "payResult";
 //		}else{
 //			return "error";
 //		}
-		if(res.equals("00")){
-			logger.info("支付宝支付成功");
-			return "payResult2";
-		}else if(res.equals("01")){
-			logger.info("正在输入密码验证支付");
-			return "payResult01";
-		}else if(res.equals("02")){
-			logger.info("状态未知");
-			return "payResult02";
-		}else if(res.equals("03")){
-			logger.info("调用支付宝失败");
-			return "payResult03";
-		}else if(res.equals("000")){
-			logger.info("微信支付成功");
-			return "payResult1";
-		}else if(res.equals("001")){
-			logger.info("微信支付，正在输入密码");
-			return "payResult001";
-		}else if(res.equals("002")){
-			logger.info("其他错误");
-			return "payResult002";
-		}else if(res.equals("003")){
-			logger.info("调用微信失败");
-			return "payResult003";
-		}else if(res.equals("00000")){
-			logger.info("调用银联成功");
-			return "payResult00000";
-		}else if(res.equals("00001")){
-			logger.info("其他应答码为失败请排查原因或做失败处理");
-			return "payResult00001";
-		}else if(res.equals("00002")){
-			logger.info("验证签名失败");
-			return "payResult00002";
-		}else if(res.equals("00003")){
-			logger.info("未获取到返回报文或返回http状态码非200");
-			return "payResult00003";
-		}
-		else{
-			logger.info("非法授权码");
-			return "payResult0000";
-		}
+//		if(res.equals("00")){
+//			logger.info("支付宝支付成功");
+//			return "payResult2";
+//		}else if(res.equals("01")){
+//			logger.info("正在输入密码验证支付");
+//			return "payResult01";
+//		}else if(res.equals("02")){
+//			logger.info("状态未知");
+//			return "payResult02";
+//		}else if(res.equals("03")){
+//			logger.info("调用支付宝失败");
+//			return "payResult03";
+//		}else if(res.equals("000")){
+//			logger.info("微信支付成功");
+//			return "payResult1";
+//		}else if(res.equals("001")){
+//			logger.info("微信支付，正在输入密码");
+//			return "payResult001";
+//		}else if(res.equals("002")){
+//			logger.info("其他错误");
+//			return "payResult002";
+//		}else if(res.equals("003")){
+//			logger.info("调用微信失败");
+//			return "payResult003";
+//		}else if(res.equals("00000")){
+//			logger.info("调用银联成功");
+//			return "payResult00000";
+//		}else if(res.equals("00001")){
+//			logger.info("其他应答码为失败请排查原因或做失败处理");
+//			return "payResult00001";
+//		}else if(res.equals("00002")){
+//			logger.info("验证签名失败");
+//			return "payResult00002";
+//		}else if(res.equals("00003")){
+//			logger.info("未获取到返回报文或返回http状态码非200");
+//			return "payResult00003";
+//		}
+//		else{
+//			logger.info("非法授权码");
+//			return "payResult0000";
+//		}
 		
 	}
 

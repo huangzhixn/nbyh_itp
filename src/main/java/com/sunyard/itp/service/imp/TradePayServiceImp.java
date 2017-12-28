@@ -17,6 +17,7 @@ import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.request.AlipayTradePayRequest;
 import com.alipay.api.response.AlipayTradePayResponse;
 import com.sunyard.itp.constant.PayConst;
+import com.sunyard.itp.entity.Message;
 import com.sunyard.itp.entity.TradePayParams;
 import com.sunyard.itp.service.QueryOrderService;
 import com.sunyard.itp.service.TradePayService;
@@ -44,12 +45,13 @@ public class TradePayServiceImp implements TradePayService{
 	protected Logger logger = LoggerFactory.getLogger(TradePayServiceImp.class);
 
 	@Override
-	public String tradePay(TradePayParams tradePayparams) throws Exception {
+	public Message tradePay(TradePayParams tradePayparams) throws Exception {
 		String auth_code = tradePayparams.getAuthCode();
 		BigDecimal totalFee = tradePayparams.getTotalFee();
-		
+		Message message = new Message();
 		if(auth_code.startsWith("25") || auth_code.startsWith("26") || auth_code.startsWith("27") || auth_code.startsWith("28") || auth_code.startsWith("29") || auth_code.startsWith("30")){
-			logger.info("支付宝");
+			logger.debug("支付宝");
+			message.setPayType("1");
 			String out_trade_no = "alipay-tra" + System.currentTimeMillis()
 		    + (long) (Math.random() * 10000000L);
 			AlipayClient alipayClient = new DefaultAlipayClient(PayConst.OPEN_API_DOMAIN,
@@ -68,7 +70,7 @@ public class TradePayServiceImp implements TradePayService{
 					"\"subject\":\"支付宝主扫测试\"," +
 					"\"total_amount\":"+totalFee+"" +
 					"  }");
-			logger.info("{" +
+			logger.debug("{" +
 					"\"out_trade_no\":\""+out_trade_no+"\"," +
 					"\"auth_code\":\""+auth_code+"\"," +
 					"\"subject\":\"支付宝主扫测试\"," +
@@ -76,19 +78,22 @@ public class TradePayServiceImp implements TradePayService{
 					"  }" );
 			System.err.println(request.getBizContent());
 			AlipayTradePayResponse response = alipayClient.execute(request);
-			logger.info(response.getBody());
+			logger.debug(response.getBody());
+			
+			message.setAmount(response.getTotalAmount());
+			message.setBuyer(response.getBuyerLogonId());
 			if(response.isSuccess()){
-				logger.info(response.toString());
-				logger.info("调用成功");
+				logger.debug(response.toString());
+				logger.debug("调用成功");
 				if(response.getCode().equals("10000") && response.getMsg().equals("Success")){
-					logger.info("支付成功");
-					return "00";
+					logger.debug("支付成功");
+					message.setPayStatu("00");
 				}else if(response.getCode().equals("10003")){
-					logger.info("买家正在支付，请确认！");
-					return "01";
+					logger.debug("买家正在支付，请确认！");
+					message.setPayStatu("01");
 				}else{
-					logger.info("状态未知!");
-					return "02";
+					logger.debug("状态未知!");
+					message.setPayStatu("02");
 				}
 				
 				//交易成功，插入流水
@@ -115,11 +120,13 @@ public class TradePayServiceImp implements TradePayService{
 				//transFlowService.addTransFlow(transFlow);
 				//return "支付成功！";
 				} else {
-				logger.info("调用失败");
-				return "03";
+				logger.debug("调用失败");
+				message.setPayStatu("02");
 			}
+			return message;
 		}else if(auth_code.startsWith("10") || auth_code.startsWith("11") || auth_code.startsWith("12") || auth_code.startsWith("13") || auth_code.startsWith("14") || auth_code.startsWith("15")){
-			logger.info("微信支付");
+			logger.debug("微信支付");
+			message.setPayType("2");
 			String statu = "微信支付成功！";
 			String out_trade_no = "weixin-tra" + System.currentTimeMillis()
 		    + (long) (Math.random() * 10000000L);
@@ -132,9 +139,10 @@ public class TradePayServiceImp implements TradePayService{
 	    	data.put("total_fee", totalFee.toString());
 	    	data.put("spbill_create_ip", "172.16.17.18");
 	    	data.put("auth_code", auth_code);
-	    	 try {
 	             Map<String, String> r = wxpay.microPay(data);
-	             logger.info(r.toString());
+	             logger.debug(r.toString());
+	             message.setAmount(r.get("total_fee"));
+            	 message.setBuyer(r.get("openid"));
 	             //如果成功 插入流水
 	             if(r.get("result_code").equals("SUCCESS")){
 		           /**
@@ -154,24 +162,25 @@ public class TradePayServiceImp implements TradePayService{
 		 			//插入流水    非公司环境   不连数据库
 		 			//transFlowService.addTransFlow(transFlow);
 	 			 */
-		 			return "000";
+	            	 message.setPayStatu("00");
+	            	 
+		 			return message;
 	             }else{
-	            	 logger.info("微信刷卡支付失败");
+	            	 logger.debug("微信刷卡支付失败");
 	            	 statu = "微信支付失败";
 	            	 String errCode = r.get("err_code");
-	            	 logger.info("错误代码："+errCode);
+	            	 logger.debug("错误代码："+errCode);
 	            	 String errCodeDes = r.get("err_code_des");		
-	            	 logger.info("错误描述"+errCodeDes);
+	            	 logger.debug("错误描述"+errCodeDes);
 	            	 if(errCode.equals("USERPAYING")){
-	            		 logger.info("买家正在支付，请收银员确认核对！");
-	            		 return "001";
+	            		 logger.debug("买家正在支付，请收银员确认核对！");
+	            		 message.setPayStatu("01");
+	            		 return message;
 	            	 }else{
-	            		 logger.info("微信主扫支付其他错误");
-	            		 return "002";
+	            		 logger.debug("微信主扫支付其他错误");
+	            		 message.setPayStatu("02");
+	            		 return message;
 	            	 }
-	            	 
-	            	 
-	            	 
 	            	 /**
 	            	  * 
 	            	 TransFlow transFlow = new TransFlow();
@@ -182,12 +191,10 @@ public class TradePayServiceImp implements TradePayService{
 	            	 //transFlowService.addTransFlow(transFlow);
 	            	  */
 	             }
-	         } catch (Exception e) {
-	             e.printStackTrace();
-	             return "003";
-	         }
+	         
 		}else if(auth_code.startsWith("62")){
-			
+			logger.debug("银联客户被扫");
+			message.setPayType("3");
 			Map<String, String> contentData = new HashMap<String, String>();
 			
 			/***银联全渠道系统，产品参数，除了encoding自行选择外其他不需修改***/
@@ -205,7 +212,7 @@ public class TradePayServiceImp implements TradePayService{
 			String date = df.format(new Date());
 			String termId = "00000011";
 			String totalFee1 = totalFee.toString();
-			logger.info("银联主扫支付金额-------------"+totalFee1);
+			logger.debug("银联主扫支付金额-------------"+totalFee1);
 			/***商户接入参数***/
 			contentData.put("merId", merId);   		 				//商户号码，请改成自己申请的商户号或者open上注册得来的777商户号测试
 			contentData.put("accessType", "0");            		 	//接入类型，商户接入填0 ，不需修改（0：直连商户， 1： 收单机构 2：平台商户）
@@ -215,8 +222,8 @@ public class TradePayServiceImp implements TradePayService{
 			contentData.put("currencyCode", "156");                 //境内商户固定 156 人民币
 			contentData.put("qrNo", auth_code);                 		//C2B码,1-20位数字
 			contentData.put("termId", termId);                  	//终端号
-			logger.info("授权码++++++++++"+auth_code);
-			logger.info("收款金额+++++++++"+totalFee);
+			logger.debug("授权码++++++++++"+auth_code);
+			logger.debug("收款金额+++++++++"+totalFee);
 			// 请求方保留域，
 	        // 透传字段，查询、通知、对账文件中均会原样出现，如有需要请启用并修改自己希望透传的数据。
 	        // 出现部分特殊字符时可能影响解析，请按下面建议的方式填写：
@@ -252,31 +259,35 @@ public class TradePayServiceImp implements TradePayService{
 						//TODO
 						String reqMessage = DemoBase.genHtmlResult(reqData);
 						String rspMessage = DemoBase.genHtmlResult(rspData);
-						logger.info("响应数据-----------"+rspData);
-						logger.info("请求数据-----------"+reqData);
-						logger.info("响应数据++++++++++++"+rspMessage);
-						logger.info("请求数据+++++++++++++"+reqMessage);
-						return "00000";
+						logger.debug("响应数据-----------"+rspData);
+						logger.debug("请求数据-----------"+reqData);
+						logger.debug("响应数据++++++++++++"+rspMessage);
+						logger.debug("请求数据+++++++++++++"+reqMessage);
+						message.setPayStatu("00");
+						return message;
 					}else{
 						//其他应答码为失败请排查原因或做失败处理
-						//TODO
-						return "00001";
+						message.setPayStatu("02");
+						return message;
 					}
 				}else{
-					logger.info("验证签名失败");
+					logger.debug("验证签名失败");
 					//TODO 检查验证签名失败的原因
-					return "00002";
+					message.setPayStatu("02");
+					return message;
 				}
 			}else{
 				
 				//未返回正确的http状态
-				logger.info("未获取到返回报文或返回http状态码非200");
-				return "00003";
+				logger.debug("未获取到返回报文或返回http状态码非200");
+				message.setPayStatu("02");
+				return message;
 			}
 				
 		}
 		else{
-			return "0000";
+			message.setPayStatu("00");
+			return message;
 		}
 	}
 }
