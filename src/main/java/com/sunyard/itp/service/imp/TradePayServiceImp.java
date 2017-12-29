@@ -16,9 +16,11 @@ import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.request.AlipayTradePayRequest;
 import com.alipay.api.response.AlipayTradePayResponse;
+import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.sunyard.itp.constant.PayConst;
 import com.sunyard.itp.entity.Message;
 import com.sunyard.itp.entity.TradePayParams;
+import com.sunyard.itp.entity.TransFlow;
 import com.sunyard.itp.service.QueryOrderService;
 import com.sunyard.itp.service.TradePayService;
 import com.sunyard.itp.service.TransFlowService;
@@ -51,7 +53,7 @@ public class TradePayServiceImp implements TradePayService{
 		Message message = new Message();
 		if(auth_code.startsWith("25") || auth_code.startsWith("26") || auth_code.startsWith("27") || auth_code.startsWith("28") || auth_code.startsWith("29") || auth_code.startsWith("30")){
 			logger.debug("支付宝");
-			message.setPayType("1");
+			message.setPayType("0");
 			String out_trade_no = "alipay-tra" + System.currentTimeMillis()
 		    + (long) (Math.random() * 10000000L);
 			AlipayClient alipayClient = new DefaultAlipayClient(PayConst.OPEN_API_DOMAIN,
@@ -97,8 +99,7 @@ public class TradePayServiceImp implements TradePayService{
 				}
 				
 				//交易成功，插入流水
-				/**
-				 *  
+				
 				AlipayTradeQueryResponse order = queryOrderService.queryAlipayOrder(out_trade_no);
 				//如果预下单成功，将该交易流水插入到数据库中
 				TransFlow transFlow = new TransFlow();
@@ -108,16 +109,17 @@ public class TradePayServiceImp implements TradePayService{
 				transFlow.setTradeStatus(order.getTradeStatus());
 				transFlow.setTotalAmount(order.getTotalAmount());
 				transFlow.setReceiptAmount(order.getReceiptAmount());
+				transFlow.setPayModel("0");
 				//转换时间格式
 				DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
 				String date = df.format(order.getSendPayDate());
 				transFlow.setSendPayDate(date);
 				transFlow.setBuyerUserId(order.getBuyerUserId());
 				transFlow.setTransType("0");
-				*/
+				
 				//插入流水
 				//不在公司环境，连接不上数据库
-				//transFlowService.addTransFlow(transFlow);
+				transFlowService.addTransFlow(transFlow);
 				//return "支付成功！";
 				} else {
 				logger.debug("调用失败");
@@ -126,7 +128,7 @@ public class TradePayServiceImp implements TradePayService{
 			return message;
 		}else if(auth_code.startsWith("10") || auth_code.startsWith("11") || auth_code.startsWith("12") || auth_code.startsWith("13") || auth_code.startsWith("14") || auth_code.startsWith("15")){
 			logger.debug("微信支付");
-			message.setPayType("2");
+			message.setPayType("1");
 			String statu = "微信支付成功！";
 			String out_trade_no = "weixin-tra" + System.currentTimeMillis()
 		    + (long) (Math.random() * 10000000L);
@@ -145,8 +147,7 @@ public class TradePayServiceImp implements TradePayService{
             	 message.setBuyer(r.get("openid"));
 	             //如果成功 插入流水
 	             if(r.get("result_code").equals("SUCCESS")){
-		           /**
-		            * 	           
+		                      
 	            	 Map<String, String> order = queryOrderService.queryWxOrder(out_trade_no);
 		           //如果预下单成功，将该交易流水插入到数据库中   组织数据
 		 			TransFlow transFlow = new TransFlow();
@@ -159,9 +160,10 @@ public class TradePayServiceImp implements TradePayService{
 		 			transFlow.setSendPayDate(order.get("time_end"));
 		 			transFlow.setBuyerUserId(order.get("openid"));
 		 			transFlow.setTransType("1");
+		 			transFlow.setPayModel("3");
 		 			//插入流水    非公司环境   不连数据库
-		 			//transFlowService.addTransFlow(transFlow);
-	 			 */
+		 			transFlowService.addTransFlow(transFlow);
+	 			
 	            	 message.setPayStatu("00");
 	            	 
 		 			return message;
@@ -194,7 +196,7 @@ public class TradePayServiceImp implements TradePayService{
 	         
 		}else if(auth_code.startsWith("62")){
 			logger.debug("银联客户被扫");
-			message.setPayType("3");
+			message.setPayType("2");
 			Map<String, String> contentData = new HashMap<String, String>();
 			
 			/***银联全渠道系统，产品参数，除了encoding自行选择外其他不需修改***/

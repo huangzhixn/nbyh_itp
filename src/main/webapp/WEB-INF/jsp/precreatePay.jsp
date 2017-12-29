@@ -82,7 +82,7 @@ body{
 </style>
 <body style="background: #eee;">
 	<div class="vux-header" style="background: rgb(50, 90, 152);">
-		<h1 class="vux-header-title">信雅达被扫发起界面</h1>
+		<h1 class="vux-header-title">商户：${requestScope.mchntCd}</h1>
 	</div>
 	<div class="inputBox">
 		<form id="form1" style="height:130px;display:none" action="aliPrecreate.action" method="post">

@@ -19,6 +19,7 @@
  		location.href=a;
 // 		alert("${pageContext.request.contextPath }/toPay.action");
 //  		window.location="${pageContext.request.contextPath }/toPay.action";
+// 		location.href="http://172.16.17.18:8083/nbyh_itp/toPay.action";
 	</script>
 </body>
 

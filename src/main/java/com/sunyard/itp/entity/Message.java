@@ -1,7 +1,7 @@
 package com.sunyard.itp.entity;
 
 public class Message {
-	private String payType;//1-支付宝，2-微信 3-银联
+	private String payType;//0-支付宝，1-微信 2-银联
 	private String amount; //支付金额
 	private String payStatu;//支付状态  00-支付成功  01-正在输入密码支付，请确认 02-支付失败
 	private String buyer;   //支付id
@@ -10,10 +10,12 @@ public class Message {
 		if(payType == null || payType == "")
 			return "";
 		switch (payType) {
-		case "1":
+		case "0":
 			return "支付宝";
-		case "2":
+		case "1":
 			return "微信";
+		case "2":
+			return "银联";
 		default:
 			return "";
 		}	

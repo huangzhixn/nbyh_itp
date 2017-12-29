@@ -94,8 +94,11 @@ public class PayController {
 	 * 跳转到被扫支付页面
 	 * @return
 	 */
-	@RequestMapping("/toPay")
-	public String toPay(){
+	@RequestMapping(value = "toPay", produces = "text/html;charset=UTF-8")
+	
+	public String toPay(String mchntCd,ModelMap modelMap){
+		logger.debug("++++"+mchntCd);
+		modelMap.addAttribute("mchntCd",mchntCd);
 		return "precreatePay";
 	}
 	
@@ -109,6 +112,7 @@ public class PayController {
 		logger.info("页面传递过来的参数是："+precreateParams.toString());
 		String url = precreateService.precreate(request,response,precreateParams);
 		modelMap.addAttribute("qrcode",url);
+		logger.debug("--------"+url);
 		if(url.indexOf("alipay") != -1){
 //			response.sendRedirect(url);
 			return "alipay";	
