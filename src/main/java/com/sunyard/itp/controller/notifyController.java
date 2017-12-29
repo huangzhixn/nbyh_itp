@@ -55,7 +55,7 @@ public class notifyController {
 //			}else{
 //			    // TODO 验签失败则记录异常日志，并在response中返回failure.
 //			}
-		logger.info("进入支付宝异步回调！");
+		logger.info("进入支付宝异步通知！");
 		 //获取支付宝POST过来反馈信息  
 	    Map<String,String> params = new HashMap<String,String>();  
 	    Map requestParams = request.getParameterMap();  
@@ -86,6 +86,8 @@ public class notifyController {
 	    String gmt_payment = request.getParameter("gmt_payment");//付款时间
 	    String seller_id = request.getParameter("seller_id");   //支付宝ID    208......  
 	    
+	    
+	    logger.debug("----"+trade_status);
 	    PrintWriter out=response.getWriter();
 	    //获取支付宝的通知返回参数，可参考技术文档中页面跳转同步通知参数列表(以上仅供参考)//  
 	  

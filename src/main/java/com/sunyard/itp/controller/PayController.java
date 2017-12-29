@@ -299,7 +299,8 @@ public class PayController {
         	 String prepay_id =  r.get("prepay_id");
         	 logger.info("prepay_id:"+prepay_id);
         	 String timeStap = String.valueOf(System.currentTimeMillis() / 1000);//时间戳
-     		 String nonceStr = WXPayUtil.generateUUID();  //随机字符串
+     		 String nonceStr 
+     		 = WXPayUtil.generateUUID();  //随机字符串
      		 String appId = PayConst.WX_APP_ID;  //appid
      		 
      		 SortedMap<String, String> payMap = new TreeMap<String, String>();  
@@ -345,5 +346,11 @@ public class PayController {
 		
 		return "payResult1";
 	}
+	@RequestMapping("toPrecreatePayDyn")
+	public String toPrecreatePayDyn(String totalFee,ModelMap modelMap){
+		modelMap.addAttribute("totalFee", totalFee);
+		return "precreatePayDyn";
+	}
+	
 	
 }

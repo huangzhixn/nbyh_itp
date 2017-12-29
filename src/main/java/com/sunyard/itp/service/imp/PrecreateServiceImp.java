@@ -96,7 +96,7 @@ public class PrecreateServiceImp implements PrecreateService{
 			transFlow.setBuyerUserId("待支付下单");
 			transFlow.setTransType("0");
 			//不再公司环境连接不上数据库
-			//transFlowService.addTransFlow(transFlow);
+			transFlowService.addTransFlow(transFlow);
 			return response.getQrCode();		
 			} else {
 			logger.info("调用预下单失败");

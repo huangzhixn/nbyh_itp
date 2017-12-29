@@ -9,7 +9,7 @@
 		(#{tradeNo},#{outTradeNo},#{buyerLogonId},#{tradeStatus},#{totalAmount},#{receiptAmount},#{sendPayDate},#{buyerUserId},#{transType},#{payModel})
 	</insert>
 	
-	<select id="queryTransFlow" parameterType="TransFlow" resultType="java.lang.Integer">
+	<select id="queryTransFlow" parameterType="TransFlow" resultType="int">
 		select count(1) from TBL_TRANS_FLW
 		where
 		OUT_TRADE_NO = #{outTradeNo}
