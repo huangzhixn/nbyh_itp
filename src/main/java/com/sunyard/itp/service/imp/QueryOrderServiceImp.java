@@ -16,6 +16,7 @@ import com.sunyard.itp.entity.Message;
 import com.sunyard.itp.entity.TransFlow;
 import com.sunyard.itp.mapper.QueryOrderMapper;
 import com.sunyard.itp.service.QueryOrderService;
+import com.sunyard.itp.utils.DateUtil;
 import com.sunyard.itp.utils.wxpay.WXPay;
 import com.sunyard.itp.utils.wxpay.WXPayConfigImpl;
 /**
@@ -145,7 +146,7 @@ public class QueryOrderServiceImp implements QueryOrderService{
 				transFlow.setBuyerUserId(wxresp.get("openid"));
 				transFlow.setTotalAmount(wxresp.get("total_fee"));
 				transFlow.setReceiptAmount(wxresp.get("settlement_total_fee"));
-				transFlow.setSendPayDate(wxresp.get("time_end"));
+				transFlow.setSendPayDate(DateUtil.dateformat(wxresp.get("time_end")));
 				transFlow.setTradeNo(wxresp.get("transaction_id"));
 				message.setPayStatu("00");
 			}else if(wxresp.get("return_code").equals("SUCCESS") && wxresp.get("trade_state").equals("USERPAYING")){

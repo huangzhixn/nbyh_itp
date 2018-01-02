@@ -18,6 +18,21 @@ public class TransFlow {
 	 */
 	private String payModel;//支付方式   
 	
+	
+	private String broadcast;//语音播报   00-已播报  01-未播报
+	
+	public String getBroadcastName(){
+		if(tradeStatus == null || tradeStatus == "")
+			return "";
+		switch (tradeStatus) {
+		case "00":
+			return "已播报";
+		case "01":
+			return "未播报";
+		default:
+			return "";
+		}	
+	}
 	public String getTradeStatusName(){
 		if(tradeStatus == null || tradeStatus == "")
 			return "";
@@ -49,15 +64,13 @@ public class TransFlow {
 		case "0":
 			return "支付宝客户被扫";
 		case "1":
-			return "支付宝客户主扫（动态码）";
-		case "2":
-			return "支付宝客户主扫（静态码）";
+			return "支付宝客户主扫";
+		
 		case "3":
 			return "微信客户被扫 ";
 		case "4":
-			return "微信客户主扫（动态码）";
-		case "5":
-			return "微信客户主扫（静态码）";
+			return "微信客户主扫";
+		
 		case "6":
 			return "银联客户被扫";
 		case "7":
@@ -129,6 +142,12 @@ public class TransFlow {
 	}
 	public void setTransType(String transType) {
 		this.transType = transType;
+	}
+	public String getBroadcast() {
+		return broadcast;
+	}
+	public void setBroadcast(String broadcast) {
+		this.broadcast = broadcast;
 	}
 
 	

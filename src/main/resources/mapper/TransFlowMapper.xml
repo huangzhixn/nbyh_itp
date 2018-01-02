@@ -4,9 +4,11 @@
 <mapper namespace="com.sunyard.itp.mapper.TransFlowMapper">
 	<insert id="addTransFlow" parameterType="TransFlow">
 		insert into TBL_TRANS_FLW
-		(TRADE_NO,OUT_TRADE_NO,BUYER_LOGON_ID,TRADE_STATUS,TOTAL_AMOUNT,RECEIPT_AMOUNT,SEND_PAY_DATE,BUYER_USER_ID,TRANS_TYPE,PAY_MODEL)
+		(TRADE_NO,OUT_TRADE_NO,BUYER_LOGON_ID,TRADE_STATUS,TOTAL_AMOUNT,RECEIPT_AMOUNT,SEND_PAY_DATE,
+		BUYER_USER_ID,TRANS_TYPE,PAY_MODEL,BROADCAST)
 		values
-		(#{tradeNo},#{outTradeNo},#{buyerLogonId},#{tradeStatus},#{totalAmount},#{receiptAmount},#{sendPayDate},#{buyerUserId},#{transType},#{payModel})
+		(#{tradeNo},#{outTradeNo},#{buyerLogonId},#{tradeStatus},#{totalAmount},#{receiptAmount},#{sendPayDate}
+		,#{buyerUserId},#{transType},#{payModel},#{broadcast})
 	</insert>
 	
 	<select id="queryTransFlow" parameterType="TransFlow" resultType="int">

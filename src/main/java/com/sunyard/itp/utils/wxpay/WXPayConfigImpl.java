@@ -16,8 +16,8 @@ public class WXPayConfigImpl extends WXPayConfig{
 
     private WXPayConfigImpl() throws Exception{
     	//安全证书，没有无法退款
-      String certPath = "D://CERT/common/apiclient_cert.p12";
-//     String certPath = "/opt/cert/apiclient_cert.p12";
+//      String certPath = "D://CERT/common/apiclient_cert.p12";
+     String certPath = "/opt/cert/apiclient_cert.p12";
         
         File file = new File(certPath);
         InputStream certStream = new FileInputStream(file);

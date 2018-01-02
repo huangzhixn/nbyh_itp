@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sunyard.itp.constant.PayConst;
 import com.sunyard.itp.entity.TransFlow;
@@ -46,7 +47,8 @@ public class notifyController {
 	
 	protected Logger logger = LoggerFactory.getLogger(getClass());
 	@RequestMapping("/aliNotify")
-	public void notify(HttpServletRequest request,HttpServletResponse response) throws IOException{
+	@ResponseBody
+	public String notify(HttpServletRequest request,HttpServletResponse response) throws IOException{
 //		Map<String, String> paramsMap = ... //将异步通知中收到的待验证所有参数都存放到map中
 //			boolean signVerified = AlipaySignature.rsaCheckV1(paramsMap, ALIPAY_PUBLIC_KEY, CHARSET) //调用SDK验证签名
 //			if(signVerfied){
@@ -91,31 +93,15 @@ public class notifyController {
 	    PrintWriter out=response.getWriter();
 	    //获取支付宝的通知返回参数，可参考技术文档中页面跳转同步通知参数列表(以上仅供参考)//  
 	  
-	    if(transFlowService.queryTransFlow(params) >= 1){//验证成功          
+//	    if(transFlowService.queryTransFlow(params) >= 1){//验证成功          
 	        //请在这里加上商户的业务逻辑程序代码  
 	        //——请根据您的业务逻辑来编写程序（以下代码仅作参考）——  
-	          
 	        if(trade_status.equals("TRADE_FINISHED") || trade_status.equals("TRADE_SUCCESS")){  
 	            //判断该笔订单是否在商户网站中已经做过处理（可参考“集成教程”中“3.4返回数据处理”）  
 	                //如果没有做过处理，根据订单号（out_trade_no）在商户网站的订单系统中查到该笔订单的详细，并执行商户的业务程序  
 	                //如果有做过处理，不执行商户的业务程序  	        	
 	        	  TransFlow trans = new TransFlow();
-	              trans.setTradeNo(trade_no);
-	              trans.setOutTradeNo(order_no);
-	              trans.setTotalAmount(total_fee);
-	              trans.setReceiptAmount(total_fee);
-	              trans.setSendPayDate(gmt_payment);
-	              trans.setBuyerLogonId(buyer_email);
-	              trans.setBuyerUserId(seller_id);
-	              trans.setTradeStatus(trade_status);
-	              //更新数据库v
-	              transFlowService.updateTrade(trans);
-	              
-	              out.println("success"); //请不要修改或删除  ,返回给支付宝
-	        	
-	        } else {  
-	        	 TransFlow trans = new TransFlow();
-	              trans.setTradeNo(trade_no);
+	        	  trans.setTradeNo(trade_no);
 	              trans.setOutTradeNo(order_no);
 	              trans.setTotalAmount(total_fee);
 	              trans.setReceiptAmount(total_fee);
@@ -123,19 +109,42 @@ public class notifyController {
 	              trans.setBuyerLogonId(buyer_email);
 	     
 	              trans.setBuyerUserId(seller_id);
-	              trans.setTradeStatus(trade_status);
+	              trans.setTradeStatus("00");
+	              trans.setPayModel("1");
+	              trans.setTransType("1");
+	              trans.setBroadcast("01");
 	              //更新数据库v
-	              transFlowService.updateTrade(trans);
+	              transFlowService.addTransFlow(trans);;
+	              
+//	              out.println("success"); //请不要修改或删除  ,返回给支付宝
+	        	return "success";
+	        } else {  
+//	        	 TransFlow trans = new TransFlow();
+//	              trans.setTradeNo(trade_no);
+//	              trans.setOutTradeNo(order_no);
+//	              trans.setTotalAmount(total_fee);
+//	              trans.setReceiptAmount(total_fee);
+//	              trans.setSendPayDate(gmt_payment);
+//	              trans.setBuyerLogonId(buyer_email);
+//	     
+//	              trans.setBuyerUserId(seller_id);
+//	              trans.setTradeStatus("00");
+//	              trans.setPayModel("1");
+//	              trans.setTransType("1");
+//	              trans.setBroadcast("01");
+//	              //更新数据库v
+//	              transFlowService.addTransFlow(trans);;
 	        	
-	            out.println("success"); //请不要修改或删除  
+//	            out.println("success"); //请不要修改或删除  
+	              return "fail";
 	        }  
 	  
 	        //——请根据您的业务逻辑来编写程序（以上代码仅作参考）——  
 	  
 	        //////////////////////////////////////////////////////////////////////////////////////////  
-	    }else{//验证失败  
-	        out.println("fail");  
-	    }  
+//	    }else{//验证失败  
+//	        out.println("fail");  
+//	    }  
 }
 	/**
 	 * 
@@ -157,20 +166,53 @@ public class notifyController {
 	logger.info("微信异步回调");
 	 String retStr = new String(Util.readInput(request.getInputStream()),"utf-8");
      Map<String, Object> map = XMLParser.getMapFromXML(retStr);
+     Map<String,String> newMap =new HashMap<String,String>();
+     for (Map.Entry<String, Object> entry : map.entrySet()) {
+            if(entry.getValue() instanceof String){
+                 newMap.put(entry.getKey(), (String) entry.getValue());
+               }
+      }
+     logger.debug("+++"+newMap.get("return_code"));
+     logger.debug("------"+newMap.get("result_code"));
      //返回的数据
-
+     if (newMap.get("return_code").equals("SUCCESS") && newMap.get("result_code").equals("SUCCESS")) {
+    	 logger.debug("----"+"微信支付异步通知，支付成功");
+    	 TransFlow transFlow = new TransFlow();
+			transFlow.setTradeNo(newMap.get("transaction_id"));
+			transFlow.setOutTradeNo(newMap.get("out_trade_no"));
+			transFlow.setBuyerLogonId(newMap.get("openid"));
+			//支付状态  00-支付成功  01-正在输入密码支付，请确认 02-支付失败
+//			transFlow.setTradeStatus(r.get("00"));
+			transFlow.setTotalAmount(newMap.get("total_fee"));
+			transFlow.setReceiptAmount(newMap.get("settlement_total_fee"));
+			transFlow.setSendPayDate(newMap.get("time_end"));
+			transFlow.setBuyerUserId(newMap.get("openid"));
+			transFlow.setTransType("1");
+			transFlow.setPayModel("4");
+			transFlow.setTradeStatus("00");
+			transFlow.setBroadcast("01");
+			transFlowService.addTransFlow(transFlow);
+			
+			response.setContentType("text/xml");
+		     String xml= "<xml>"
+		             + "<return_code><![CDATA[SUCCESS]]></return_code>"
+		             + "<return_msg><![CDATA[OK]]></return_msg>"
+		             + "</xml>";
+		     response.getWriter().print(xml);
+		     response.getWriter().flush();
+		     response.getWriter().close();
      //支付回调处理订单 更改订单状态
-
+     }else{
      response.setContentType("text/xml");
      String xml= "<xml>"
-             + "<return_code><![CDATA[SUCCESS]]></return_code>"
-             + "<return_msg><![CDATA[OK]]></return_msg>"
+             + "<return_code><![CDATA[FAIL]]></return_code>"
+             + "<return_msg><![CDATA[NO]]></return_msg>"
              + "</xml>";
      response.getWriter().print(xml);
      response.getWriter().flush();
      response.getWriter().close();
 	
-	
+     }
 	}
 	/**
 	 * 

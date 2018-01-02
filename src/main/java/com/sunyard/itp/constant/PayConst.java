@@ -33,7 +33,7 @@ public class PayConst {
 	//主扫支付场景   声波/条码
 	public final static String SCENE = "bar_code";
 	//异步返回回调通知
-	public final static String NOTIFY_URL = "http://pay.sydtech.com.cn/aliNotify.action";
+	public final static String NOTIFY_URL = "http://pay.sydtech.com.cn/nbyh_itp/aliNotify.action";
 	//同步通知
 	public final static String RETURN_URL = "http://pay.sydtech.com.cn/aliReturn.action";
 	
@@ -56,7 +56,7 @@ public class PayConst {
 //	public final static String WX_REPORTWORKERNUM = "2016080700185100";
 //	public final static String WX_REPORTQUEUEMAXSIZE = "2016080700185100";
 	
-	public final static String WX_NOTIFY_URL = "http://pay.sydtech.com.cn/wxNotify.action";
+	public final static String WX_NOTIFY_URL = "http://pay.sydtech.com.cn/nbyh_itp/wxNotify.action";
 	
 	public final static String WX_SPBILL_CREATE_IP = "122.224.86.107";
 	public final static String WX_UFDODER_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder";//统一下单接口 
