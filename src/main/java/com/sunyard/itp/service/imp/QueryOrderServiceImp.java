@@ -2,12 +2,19 @@ package com.sunyard.itp.service.imp;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.request.AlipayTradeQueryRequest;
 import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.sunyard.itp.constant.PayConst;
+import com.sunyard.itp.controller.PayController;
+import com.sunyard.itp.entity.Message;
+import com.sunyard.itp.entity.TransFlow;
+import com.sunyard.itp.mapper.QueryOrderMapper;
 import com.sunyard.itp.service.QueryOrderService;
 import com.sunyard.itp.utils.wxpay.WXPay;
 import com.sunyard.itp.utils.wxpay.WXPayConfigImpl;
@@ -18,6 +25,9 @@ import com.sunyard.itp.utils.wxpay.WXPayConfigImpl;
  */
 @Service
 public class QueryOrderServiceImp implements QueryOrderService{
+	private org.slf4j.Logger logger =  LoggerFactory.getLogger(QueryOrderServiceImp.class);
+	@Autowired
+	private QueryOrderMapper queryOrderMapper;
 	/**
 	 * 查询支付宝订单
 	 * @param outTradeNo
@@ -71,6 +81,122 @@ public class QueryOrderServiceImp implements QueryOrderService{
 //		            System.out.println(r.get("cash_fee"));
 		            return r;        
 		
+	}
+	@Override
+	public Message queryRound(String out_trade_no) throws Exception {
+		Message message = new Message();
+		TransFlow transFlow =new TransFlow();
+		transFlow.setOutTradeNo(out_trade_no);
+		if(out_trade_no.startsWith("alipay-tra")){
+			AlipayTradeQueryResponse resp =	queryAlipayOrder(out_trade_no);
+			logger.debug("--------"+resp.getBody());
+			
+			message.setAmount(resp.getTotalAmount());
+			message.setBuyer(resp.getBuyerLogonId());
+			message.setPayType("0");
+			message.setOut_trade_no(out_trade_no);
+			if(resp.isSuccess()){
+				if(resp.getCode().equals("10000") && resp.getTradeStatus().equals("TRADE_SUCCESS")){
+					logger.debug("支付成功");
+					
+					transFlow.setTradeStatus("00");
+					transFlow.setReceiptAmount(resp.getReceiptAmount());
+					queryOrderMapper.updateTradeStatus(transFlow);
+					message.setPayStatu("00");
+					
+				}else if(resp.getCode().equals("10000") && resp.getTradeStatus().equals("WAIT_BUYER_PAY")){
+					logger.debug("买家正在支付，请确认！");
+					
+					message.setPayStatu("01");
+				}else if(resp.getCode().equals("10000") && resp.getTradeStatus().equals("TRADE_CLOSED")){
+					logger.debug("未付款交易超时关闭，或支付完成后全额退款！");
+					transFlow.setTradeStatus("03");
+					transFlow.setReceiptAmount(resp.getReceiptAmount());
+					queryOrderMapper.updateTradeStatus(transFlow);
+					message.setPayStatu("03");
+				}
+				else if(resp.getCode().equals("10000") && resp.getTradeStatus().equals("TRADE_FINISHED")){
+					logger.debug("交易结束，不可退款！");
+					transFlow.setTradeStatus("04");
+					transFlow.setReceiptAmount(resp.getReceiptAmount());
+					queryOrderMapper.updateTradeStatus(transFlow);
+					message.setPayStatu("04");
+				}
+				else{
+					logger.debug("状态未知!");
+					
+					message.setPayStatu("02");
+				}
+			}
+				
+			
+			
+		}else if(out_trade_no.startsWith("weixin-tra")) {
+			
+			Map<String, String> wxresp = queryWxOrder( out_trade_no);
+		
+			message.setAmount(wxresp.get("total_fee"));
+			message.setBuyer(wxresp.get("openid"));
+			message.setPayType("1");
+			message.setOut_trade_no(out_trade_no);
+			if(wxresp.get("return_code").equals("SUCCESS") && wxresp.get("trade_state").equals("SUCCESS")){
+				transFlow.setTradeStatus("00");
+				transFlow.setBuyerLogonId(wxresp.get("openid"));
+				transFlow.setBuyerUserId(wxresp.get("openid"));
+				transFlow.setTotalAmount(wxresp.get("total_fee"));
+				transFlow.setReceiptAmount(wxresp.get("settlement_total_fee"));
+				transFlow.setSendPayDate(wxresp.get("time_end"));
+				transFlow.setTradeNo(wxresp.get("transaction_id"));
+				message.setPayStatu("00");
+			}else if(wxresp.get("return_code").equals("SUCCESS") && wxresp.get("trade_state").equals("USERPAYING")){
+				transFlow.setTradeStatus("01");
+				transFlow.setBuyerLogonId(wxresp.get("openid"));
+				transFlow.setBuyerUserId(wxresp.get("openid"));
+				transFlow.setTotalAmount(wxresp.get("total_fee"));
+				transFlow.setReceiptAmount(wxresp.get("settlement_total_fee"));
+				transFlow.setSendPayDate(wxresp.get("time_end"));
+				transFlow.setTradeNo(wxresp.get("transaction_id"));
+				message.setPayStatu("01");
+			}else if(wxresp.get("return_code").equals("SUCCESS") && wxresp.get("trade_state").equals("NOTPAY")){
+				logger.debug("未支付");
+				transFlow.setTradeStatus("05");
+				transFlow.setBuyerLogonId(wxresp.get("openid"));
+				transFlow.setBuyerUserId(wxresp.get("openid"));
+				transFlow.setTotalAmount(wxresp.get("total_fee"));
+				transFlow.setReceiptAmount(wxresp.get("settlement_total_fee"));
+				transFlow.setSendPayDate(wxresp.get("time_end"));
+				transFlow.setTradeNo(wxresp.get("transaction_id"));
+				message.setPayStatu("05");
+			}else if(wxresp.get("return_code").equals("SUCCESS") && wxresp.get("trade_state").equals("REFUND")){
+				logger.debug("转入退款");
+				transFlow.setTradeStatus("06");
+				transFlow.setBuyerLogonId(wxresp.get("openid"));
+				transFlow.setBuyerUserId(wxresp.get("openid"));
+				transFlow.setTotalAmount(wxresp.get("total_fee"));
+				transFlow.setReceiptAmount(wxresp.get("settlement_total_fee"));
+				transFlow.setSendPayDate(wxresp.get("time_end"));
+				transFlow.setTradeNo(wxresp.get("transaction_id"));
+				message.setPayStatu("06");
+			}else if(wxresp.get("return_code").equals("SUCCESS") && wxresp.get("trade_state").equals("CLOSED")){
+				logger.debug("已关闭");
+				transFlow.setTradeStatus("07");
+				transFlow.setBuyerLogonId(wxresp.get("openid"));
+				transFlow.setBuyerUserId(wxresp.get("openid"));
+				transFlow.setTotalAmount(wxresp.get("total_fee"));
+				transFlow.setReceiptAmount(wxresp.get("settlement_total_fee"));
+				transFlow.setSendPayDate(wxresp.get("time_end"));
+				transFlow.setTradeNo(wxresp.get("transaction_id"));
+				message.setPayStatu("07");
+			}
+				
+			queryOrderMapper.updateTradeStatusWx(transFlow);
+			
+			
+		}else{
+			message =null;
+		}
+			
+		return message;
 	}
 
 }

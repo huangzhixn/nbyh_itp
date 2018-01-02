@@ -56,6 +56,7 @@ public class TradePayServiceImp implements TradePayService{
 			message.setPayType("0");
 			String out_trade_no = "alipay-tra" + System.currentTimeMillis()
 		    + (long) (Math.random() * 10000000L);
+			message.setOut_trade_no(out_trade_no);
 			AlipayClient alipayClient = new DefaultAlipayClient(PayConst.OPEN_API_DOMAIN,
 					PayConst.APP_ID,
 					PayConst.PRIVATE_KEY,
@@ -92,9 +93,8 @@ public class TradePayServiceImp implements TradePayService{
 			transFlow.setTotalAmount(response.getTotalAmount());
 			transFlow.setReceiptAmount(response.getReceiptAmount());
 			transFlow.setPayModel("0");
-			//转换时间格式
-			DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
-			String date = df.format(response.getGmtPayment());
+			DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			String date = df.format(new Date());
 			transFlow.setSendPayDate(date);
 			transFlow.setBuyerUserId(response.getBuyerUserId());
 			transFlow.setTransType("0");
@@ -104,6 +104,10 @@ public class TradePayServiceImp implements TradePayService{
 				logger.debug("调用成功");
 				if(response.getCode().equals("10000") && response.getMsg().equals("Success")){
 					logger.debug("支付成功");
+					//转换时间格式
+					DateFormat df1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					String date1 = df1.format(response.getGmtPayment());
+					transFlow.setSendPayDate(date1);
 					transFlow.setTradeStatus("00");
 					message.setPayStatu("00");
 				}else if(response.getCode().equals("10003")){
@@ -118,7 +122,7 @@ public class TradePayServiceImp implements TradePayService{
 				
 				//交易成功，插入流水
 				
-				AlipayTradeQueryResponse order = queryOrderService.queryAlipayOrder(out_trade_no);
+//				AlipayTradeQueryResponse order = queryOrderService.queryAlipayOrder(out_trade_no);
 				//如果预下单成功，将该交易流水插入到数据库中
 //				TransFlow transFlow = new TransFlow();
 //				transFlow.setTradeNo(order.getTradeNo());
@@ -152,6 +156,7 @@ public class TradePayServiceImp implements TradePayService{
 			String statu = "微信支付成功！";
 			String out_trade_no = "weixin-tra" + System.currentTimeMillis()
 		    + (long) (Math.random() * 10000000L);
+			message.setOut_trade_no(out_trade_no);
 			WXPayConfigImpl config =  WXPayConfigImpl.getInstance();
 			WXPay wxpay = new WXPay(config);
 			HashMap<String,String> data = new HashMap<String,String>();
@@ -180,7 +185,7 @@ public class TradePayServiceImp implements TradePayService{
 	             //如果成功 插入流水
 	             if(r.get("result_code").equals("SUCCESS")){
 		                      
-	            	 Map<String, String> order = queryOrderService.queryWxOrder(out_trade_no);
+//	            	 Map<String, String> order = queryOrderService.queryWxOrder(out_trade_no);
 		           //如果预下单成功，将该交易流水插入到数据库中   组织数据
 //		 			TransFlow transFlow = new TransFlow();
 //		 			transFlow.setTradeNo(order.get("transaction_id"));

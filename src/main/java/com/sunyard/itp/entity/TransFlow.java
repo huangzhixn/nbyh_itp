@@ -4,7 +4,7 @@ public class TransFlow {
 	private String tradeNo;
 	private String outTradeNo;
 	private String buyerLogonId;
-	private String tradeStatus;//支付状态  00-支付成功  01-正在输入密码支付，请确认 02-支付失败
+	private String tradeStatus;//支付状态  00-支付成功  01-正在输入密码支付，请确认 02-支付失败03-未付款交易超时关闭，或支付完成后全额退款 04-交易结束，不可退款
 	private String totalAmount;
 	private String receiptAmount;
 	private String sendPayDate;
@@ -24,10 +24,20 @@ public class TransFlow {
 		switch (tradeStatus) {
 		case "00":
 			return "收款成功";
-		case "1":
+		case "01":
 			return "正在输入密码支付";
-		case "2":
+		case "02":
 			return "收款失败";
+		case "03":
+			return "未付款交易超时关闭，或支付完成后全额退款";
+		case "04":
+			return "交易结束，不可退款";
+		case "05":
+			return "未支付";
+		case "06":
+			return "转入退款";
+		case "07":
+			return "已关闭";
 		default:
 			return "";
 		}
