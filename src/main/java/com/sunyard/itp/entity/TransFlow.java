@@ -4,18 +4,34 @@ public class TransFlow {
 	private String tradeNo;
 	private String outTradeNo;
 	private String buyerLogonId;
-	private String tradeStatus;
+	private String tradeStatus;//支付状态  00-支付成功  01-正在输入密码支付，请确认 02-支付失败
 	private String totalAmount;
 	private String receiptAmount;
 	private String sendPayDate;
 	private String buyerUserId;
 	private String transType;
+	
 	/*支付方式 
 	 * 0 -支付宝客户被扫 1 -支付宝客户主扫（动态码） 2-支付宝客户主扫（静态码）
 	 * 3-微信客户被扫 4-微信客户主扫（动态码） 5-微信客户主扫（静态码）
 	 * 6-银联客户被扫 7-银联客户主扫（动态码）8-银联客户主扫（静态码）
 	 */
 	private String payModel;//支付方式   
+	
+	public String getTradeStatusName(){
+		if(tradeStatus == null || tradeStatus == "")
+			return "";
+		switch (tradeStatus) {
+		case "00":
+			return "收款成功";
+		case "1":
+			return "正在输入密码支付";
+		case "2":
+			return "收款失败";
+		default:
+			return "";
+		}
+	}
 	public String getPayModelName(){
 		if(payModel == null || payModel == "")
 			return "";

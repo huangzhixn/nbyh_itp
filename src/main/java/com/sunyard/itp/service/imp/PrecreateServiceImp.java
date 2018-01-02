@@ -83,20 +83,20 @@ public class PrecreateServiceImp implements PrecreateService{
 //			AlipayTradeQueryResponse queryRes = queryAlipayOrder(out_trade_no);
 			//如果预下单成功，将该交易流水插入到数据库中
 			TransFlow transFlow = new TransFlow();
-			transFlow.setTradeNo("待支付下单");
+			transFlow.setTradeNo("test");
 			transFlow.setOutTradeNo(out_trade_no);
-			transFlow.setBuyerLogonId("待支付下单");
-			transFlow.setTradeStatus("待支付下单");
+			transFlow.setBuyerLogonId("test");
+			transFlow.setTradeStatus("test");
 			transFlow.setTotalAmount(totalFee);
 			transFlow.setReceiptAmount(totalFee);
 			//转换时间格式
 			DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
 			String date = df.format(new Date());
 			transFlow.setSendPayDate(date);
-			transFlow.setBuyerUserId("待支付下单");
+			transFlow.setBuyerUserId("test");
 			transFlow.setTransType("0");
 			//不再公司环境连接不上数据库
-			transFlowService.addTransFlow(transFlow);
+//			transFlowService.addTransFlow(transFlow);
 			return response.getQrCode();		
 			} else {
 			logger.info("调用预下单失败");

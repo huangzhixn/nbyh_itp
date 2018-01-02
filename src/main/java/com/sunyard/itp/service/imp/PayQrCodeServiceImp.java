@@ -25,7 +25,7 @@ public class PayQrCodeServiceImp implements PayQrCodeService{
 
 	@Override
 	public void createQr(HttpServletResponse resp,String totalFee) throws IOException {
-		String qrCode = "http://172.16.17.18:8083/nbyh_itp/toPrecreatePayDyn.action?totalFee="+totalFee;
+		String qrCode = "http://pay.sydtech.com.cn:80/nbyh_itp/toPrecreatePayDyn.action?totalFee="+totalFee;
 		Map<EncodeHintType, Object>  hints=new HashMap<EncodeHintType, Object>();
         // 指定纠错等级  
         hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);  

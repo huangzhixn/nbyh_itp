@@ -25,11 +25,11 @@ public class Message {
 			return "";
 		switch (payStatu) {
 		case "00":
-			return "支付成功";
+			return "收款成功";
 		case "01":
 			return "正在输入密码支付，请确认";
 		case "02":
-			return "支付失败";
+			return "收款失败";
 		default:
 			return "";
 		}	

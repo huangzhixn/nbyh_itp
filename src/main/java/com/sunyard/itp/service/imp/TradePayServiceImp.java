@@ -81,20 +81,38 @@ public class TradePayServiceImp implements TradePayService{
 			System.err.println(request.getBizContent());
 			AlipayTradePayResponse response = alipayClient.execute(request);
 			logger.debug(response.getBody());
-			
+			logger.debug("-----"+response);
 			message.setAmount(response.getTotalAmount());
 			message.setBuyer(response.getBuyerLogonId());
+			TransFlow transFlow = new TransFlow();
+			transFlow.setTradeNo(response.getTradeNo());
+			transFlow.setOutTradeNo(out_trade_no);
+			transFlow.setBuyerLogonId(response.getBuyerLogonId());
+//			transFlow.setTradeStatus(response.getTradeStatus());
+			transFlow.setTotalAmount(response.getTotalAmount());
+			transFlow.setReceiptAmount(response.getReceiptAmount());
+			transFlow.setPayModel("0");
+			//转换时间格式
+			DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
+			String date = df.format(response.getGmtPayment());
+			transFlow.setSendPayDate(date);
+			transFlow.setBuyerUserId(response.getBuyerUserId());
+			transFlow.setTransType("0");
+			
 			if(response.isSuccess()){
 				logger.debug(response.toString());
 				logger.debug("调用成功");
 				if(response.getCode().equals("10000") && response.getMsg().equals("Success")){
 					logger.debug("支付成功");
+					transFlow.setTradeStatus("00");
 					message.setPayStatu("00");
 				}else if(response.getCode().equals("10003")){
 					logger.debug("买家正在支付，请确认！");
+					transFlow.setTradeStatus("01");
 					message.setPayStatu("01");
 				}else{
 					logger.debug("状态未知!");
+					transFlow.setTradeStatus("02");
 					message.setPayStatu("02");
 				}
 				
@@ -102,29 +120,31 @@ public class TradePayServiceImp implements TradePayService{
 				
 				AlipayTradeQueryResponse order = queryOrderService.queryAlipayOrder(out_trade_no);
 				//如果预下单成功，将该交易流水插入到数据库中
-				TransFlow transFlow = new TransFlow();
-				transFlow.setTradeNo(order.getTradeNo());
-				transFlow.setOutTradeNo(out_trade_no);
-				transFlow.setBuyerLogonId(order.getBuyerLogonId());
-				transFlow.setTradeStatus(order.getTradeStatus());
-				transFlow.setTotalAmount(order.getTotalAmount());
-				transFlow.setReceiptAmount(order.getReceiptAmount());
-				transFlow.setPayModel("0");
-				//转换时间格式
-				DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
-				String date = df.format(order.getSendPayDate());
-				transFlow.setSendPayDate(date);
-				transFlow.setBuyerUserId(order.getBuyerUserId());
-				transFlow.setTransType("0");
+//				TransFlow transFlow = new TransFlow();
+//				transFlow.setTradeNo(order.getTradeNo());
+//				transFlow.setOutTradeNo(out_trade_no);
+//				transFlow.setBuyerLogonId(order.getBuyerLogonId());
+//				transFlow.setTradeStatus("00");
+//				transFlow.setTotalAmount(order.getTotalAmount());
+//				transFlow.setReceiptAmount(order.getReceiptAmount());
+//				transFlow.setPayModel("0");
+//				//转换时间格式
+//				DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
+//				String date = df.format(order.getSendPayDate());
+//				transFlow.setSendPayDate(date);
+//				transFlow.setBuyerUserId(order.getBuyerUserId());
+//				transFlow.setTransType("0");
 				
 				//插入流水
 				//不在公司环境，连接不上数据库
-				transFlowService.addTransFlow(transFlow);
+//				transFlowService.addTransFlow(transFlow);
 				//return "支付成功！";
 				} else {
 				logger.debug("调用失败");
+				transFlow.setTradeStatus("02");
 				message.setPayStatu("02");
 			}
+			transFlowService.addTransFlow(transFlow);
 			return message;
 		}else if(auth_code.startsWith("10") || auth_code.startsWith("11") || auth_code.startsWith("12") || auth_code.startsWith("13") || auth_code.startsWith("14") || auth_code.startsWith("15")){
 			logger.debug("微信支付");
@@ -145,28 +165,41 @@ public class TradePayServiceImp implements TradePayService{
 	             logger.debug(r.toString());
 	             message.setAmount(r.get("total_fee"));
             	 message.setBuyer(r.get("openid"));
+            	 TransFlow transFlow = new TransFlow();
+		 			transFlow.setTradeNo(r.get("transaction_id"));
+		 			transFlow.setOutTradeNo(out_trade_no);
+		 			transFlow.setBuyerLogonId(r.get("openid"));
+		 			//支付状态  00-支付成功  01-正在输入密码支付，请确认 02-支付失败
+//		 			transFlow.setTradeStatus(r.get("00"));
+		 			transFlow.setTotalAmount(r.get("total_fee"));
+		 			transFlow.setReceiptAmount(r.get("settlement_total_fee"));
+		 			transFlow.setSendPayDate(r.get("time_end"));
+		 			transFlow.setBuyerUserId(r.get("openid"));
+		 			transFlow.setTransType("1");
+		 			transFlow.setPayModel("3");
 	             //如果成功 插入流水
 	             if(r.get("result_code").equals("SUCCESS")){
 		                      
 	            	 Map<String, String> order = queryOrderService.queryWxOrder(out_trade_no);
 		           //如果预下单成功，将该交易流水插入到数据库中   组织数据
-		 			TransFlow transFlow = new TransFlow();
-		 			transFlow.setTradeNo(order.get("transaction_id"));
-		 			transFlow.setOutTradeNo(out_trade_no);
-		 			transFlow.setBuyerLogonId(order.get("openid"));
-		 			transFlow.setTradeStatus(order.get("trade_state"));
-		 			transFlow.setTotalAmount(order.get("total_fee"));
-		 			transFlow.setReceiptAmount(order.get("settlement_total_fee"));
-		 			transFlow.setSendPayDate(order.get("time_end"));
-		 			transFlow.setBuyerUserId(order.get("openid"));
-		 			transFlow.setTransType("1");
-		 			transFlow.setPayModel("3");
-		 			//插入流水    非公司环境   不连数据库
-		 			transFlowService.addTransFlow(transFlow);
+//		 			TransFlow transFlow = new TransFlow();
+//		 			transFlow.setTradeNo(order.get("transaction_id"));
+//		 			transFlow.setOutTradeNo(out_trade_no);
+//		 			transFlow.setBuyerLogonId(order.get("openid"));
+//		 			//支付状态  00-支付成功  01-正在输入密码支付，请确认 02-支付失败
+		 			transFlow.setTradeStatus("00");
+//		 			transFlow.setTotalAmount(order.get("total_fee"));
+//		 			transFlow.setReceiptAmount(order.get("settlement_total_fee"));
+//		 			transFlow.setSendPayDate(order.get("time_end"));
+//		 			transFlow.setBuyerUserId(order.get("openid"));
+//		 			transFlow.setTransType("1");
+//		 			transFlow.setPayModel("3");
+//		 			//插入流水    非公司环境   不连数据库
+//		 			transFlowService.addTransFlow(transFlow);
 	 			
 	            	 message.setPayStatu("00");
 	            	 
-		 			return message;
+//		 			return message;
 	             }else{
 	            	 logger.debug("微信刷卡支付失败");
 	            	 statu = "微信支付失败";
@@ -174,14 +207,17 @@ public class TradePayServiceImp implements TradePayService{
 	            	 logger.debug("错误代码："+errCode);
 	            	 String errCodeDes = r.get("err_code_des");		
 	            	 logger.debug("错误描述"+errCodeDes);
+	            	 transFlow.setTradeStatus("02");
 	            	 if(errCode.equals("USERPAYING")){
 	            		 logger.debug("买家正在支付，请收银员确认核对！");
 	            		 message.setPayStatu("01");
-	            		 return message;
+	            		 transFlow.setTradeStatus("01");
+//	            		 return message;
 	            	 }else{
 	            		 logger.debug("微信主扫支付其他错误");
+	            		 transFlow.setTradeStatus("02");
 	            		 message.setPayStatu("02");
-	            		 return message;
+//	            		 return message;
 	            	 }
 	            	 /**
 	            	  * 
@@ -192,8 +228,10 @@ public class TradePayServiceImp implements TradePayService{
 	            	//不连数据库
 	            	 //transFlowService.addTransFlow(transFlow);
 	            	  */
+	            	
 	             }
-	         
+	             transFlowService.addTransFlow(transFlow);
+	             return message;
 		}else if(auth_code.startsWith("62")){
 			logger.debug("银联客户被扫");
 			message.setPayType("2");
@@ -288,7 +326,7 @@ public class TradePayServiceImp implements TradePayService{
 				
 		}
 		else{
-			message.setPayStatu("00");
+			message.setPayStatu("02");
 			return message;
 		}
 	}
