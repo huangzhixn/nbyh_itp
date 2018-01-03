@@ -106,7 +106,7 @@ public class notifyController {
 	              trans.setReceiptAmount(total_fee);
 	              trans.setSendPayDate(gmt_payment);
 	              trans.setBuyerLogonId(buyer_email);
-	     
+	              trans.setMchntNo(PayConst.APP_ID);
 	              trans.setBuyerUserId(seller_id);
 	              trans.setTradeStatus("00");
 	              trans.setPayModel("1");
@@ -186,6 +186,7 @@ public class notifyController {
 			transFlow.setReceiptAmount(newMap.get("settlement_total_fee"));
 			transFlow.setSendPayDate(newMap.get("time_end"));
 			transFlow.setBuyerUserId(newMap.get("openid"));
+			transFlow.setMchntNo(newMap.get("mch_id"));
 			transFlow.setTransType("1");
 			transFlow.setPayModel("4");
 			transFlow.setTradeStatus("00");

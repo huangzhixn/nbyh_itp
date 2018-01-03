@@ -92,6 +92,7 @@ public class TradePayServiceImp implements TradePayService{
 //			transFlow.setTradeStatus(response.getTradeStatus());
 			transFlow.setTotalAmount(response.getTotalAmount());
 			transFlow.setReceiptAmount(response.getReceiptAmount());
+			transFlow.setMchntNo(PayConst.APP_ID);
 			transFlow.setPayModel("0");
 			transFlow.setBroadcast("02");
 			DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -183,6 +184,7 @@ public class TradePayServiceImp implements TradePayService{
 		 			transFlow.setReceiptAmount(r.get("settlement_total_fee"));
 		 			transFlow.setSendPayDate(r.get("time_end"));
 		 			transFlow.setBuyerUserId(r.get("openid"));
+		 			transFlow.setMchntNo(r.get("mch_id"));
 		 			transFlow.setTransType("1");
 		 			transFlow.setPayModel("3");
 		 			transFlow.setBroadcast("02");

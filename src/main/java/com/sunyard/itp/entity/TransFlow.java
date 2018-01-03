@@ -21,6 +21,8 @@ public class TransFlow {
 	
 	
 	private String broadcast;//语音播报   00-已播报  01-未播报  02-无需播报
+	 private String mchntNo;
+	 
 	
 	public String getTransTypeName(){
 		if(transType == null || transType == "")
@@ -171,6 +173,12 @@ public class TransFlow {
 	}
 	public void setBroadcast(String broadcast) {
 		this.broadcast = broadcast;
+	}
+	public String getMchntNo() {
+		return mchntNo;
+	}
+	public void setMchntNo(String mchntNo) {
+		this.mchntNo = mchntNo;
 	}
 
 	

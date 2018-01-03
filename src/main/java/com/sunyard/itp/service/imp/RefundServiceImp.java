@@ -34,7 +34,7 @@ public class RefundServiceImp implements RefundService{
 	protected Logger logger = LoggerFactory.getLogger(RefundServiceImp.class);
 	@Override
 	public String refund(RefundParams refundParams) throws AlipayApiException {
-		logger.info("进入支付宝退款");
+		logger.info("进入退款");
 		String receiptAmount = refundParams.getreceiptAmount();
 		String refund_amount = refundParams.getRefundFee();
 		String out_trade_no = refundParams.getOutTradeNo();
@@ -65,13 +65,13 @@ public class RefundServiceImp implements RefundService{
 				logger.info("支付宝退款返回参数:"+response.getBody());
 				return "支付宝退款失败";
 			}
-		}else if(refundParams.getOutTradeNo().startsWith("wxpay")){
+		}else if(refundParams.getOutTradeNo().startsWith("weixin")){
 			logger.info("进入微信退款");
 			String out_refund_no = "weixin-ref" + System.currentTimeMillis()
 		    + (long) (Math.random() * 10000000L);
 			HashMap<String, String> data = new HashMap<String, String>();
 	        data.put("out_trade_no", out_trade_no);
-	        data.put("out_refund_no", out_trade_no);
+	        data.put("out_refund_no", out_refund_no);
 	        data.put("total_fee", receiptAmount);
 	        data.put("refund_fee", refund_amount);
 	        data.put("refund_fee_type", "CNY");
@@ -84,7 +84,8 @@ public class RefundServiceImp implements RefundService{
 	            Map<String, String> r = wxpay.refund(data);
 	            logger.info("微信退款返回参数是："+r.toString());
 	        } catch (Exception e) {
-	            e.printStackTrace();
+	            logger.debug(e.getMessage());
+	            return "微信退款失败";
 	        }
 	        //进入数据库操作流水
 
