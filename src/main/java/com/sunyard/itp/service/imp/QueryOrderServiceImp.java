@@ -1,6 +1,7 @@
 package com.sunyard.itp.service.imp;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.LoggerFactory;
@@ -10,13 +11,17 @@ import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.request.AlipayTradeQueryRequest;
 import com.alipay.api.response.AlipayTradeQueryResponse;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.sunyard.itp.constant.PayConst;
 import com.sunyard.itp.controller.PayController;
+import com.sunyard.itp.entity.DataGrid;
 import com.sunyard.itp.entity.Message;
 import com.sunyard.itp.entity.TransFlow;
 import com.sunyard.itp.mapper.QueryOrderMapper;
 import com.sunyard.itp.service.QueryOrderService;
 import com.sunyard.itp.utils.DateUtil;
+import com.sunyard.itp.utils.IPage;
 import com.sunyard.itp.utils.wxpay.WXPay;
 import com.sunyard.itp.utils.wxpay.WXPayConfigImpl;
 /**
@@ -188,16 +193,52 @@ public class QueryOrderServiceImp implements QueryOrderService{
 				transFlow.setSendPayDate(wxresp.get("time_end"));
 				transFlow.setTradeNo(wxresp.get("transaction_id"));
 				message.setPayStatu("07");
+			}else if(wxresp.get("return_code").equals("SUCCESS") && wxresp.get("trade_state").equals("REVOKED")){
+				logger.debug("已撤销");
+				transFlow.setTradeStatus("08");
+				transFlow.setBuyerLogonId(wxresp.get("openid"));
+				transFlow.setBuyerUserId(wxresp.get("openid"));
+				transFlow.setTotalAmount(wxresp.get("total_fee"));
+				transFlow.setReceiptAmount(wxresp.get("settlement_total_fee"));
+				transFlow.setSendPayDate(wxresp.get("time_end"));
+				transFlow.setTradeNo(wxresp.get("transaction_id"));
+				message.setPayStatu("08");
+			}else if(wxresp.get("return_code").equals("SUCCESS") && wxresp.get("trade_state").equals("PAYERROR")){
+				logger.debug("支付失败，其他原因");
+				transFlow.setTradeStatus("09");
+				transFlow.setBuyerLogonId(wxresp.get("openid"));
+				transFlow.setBuyerUserId(wxresp.get("openid"));
+				transFlow.setTotalAmount(wxresp.get("total_fee"));
+				transFlow.setReceiptAmount(wxresp.get("settlement_total_fee"));
+				transFlow.setSendPayDate(wxresp.get("time_end"));
+				transFlow.setTradeNo(wxresp.get("transaction_id"));
+				message.setPayStatu("10");
 			}
 				
 			queryOrderMapper.updateTradeStatusWx(transFlow);
 			
 			
 		}else{
-			message =null;
+			message.setPayStatu("02");;
 		}
 			
 		return message;
+	}
+	@Override
+	public DataGrid<TransFlow> queryTransFlw(TransFlow transFlow,IPage ipage) {
+		 // 设置分页信息
+        PageHelper.startPage(ipage.getPageNo(), ipage.getPageSize());
+        //查询数据
+		List<TransFlow> transFlows=queryOrderMapper.findAllDatas(transFlow);	
+		// 取分页信息
+        PageInfo<TransFlow> pageInfo = new PageInfo<>(transFlows);
+        // 设置返回结果
+        DataGrid<TransFlow> dataGrid = new DataGrid<>();
+        long total = pageInfo.getTotal();
+        dataGrid.setTotal(new Long(total).intValue());
+        dataGrid.setRows(transFlows);
+				
+		return dataGrid;
 	}
 
 }

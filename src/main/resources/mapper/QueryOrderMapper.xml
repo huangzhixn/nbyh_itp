@@ -18,4 +18,26 @@
 		OUT_TRADE_NO = #{outTradeNo}
 	</update>
 
+	<select id="findAllDatas" parameterType="TransFlow" resultType="TransFlow">
+		SELECT TTF.OUT_TRADE_NO, TTF.TRADE_NO, TTF.BUYER_LOGON_ID, TTF.TRADE_STATUS, 
+		TTF.TOTAL_AMOUNT, TTF.RECEIPT_AMOUNT, TTF.SEND_PAY_DATE, TTF.BUYER_USER_ID,
+		TTF.TRANS_TYPE, TTF.PAY_MODEL,TTF.BROADCAST
+		FROM TBL_TRANS_FLW AS TTF
+		<where>
+			<if test="tradeNo!=null and tradeNo!=''">
+			and TTF.TRADE_NO like '%'||#{tradeNo}||'%'
+			</if>
+			<if test="outTradeNo!=null and outTradeNo!=''">
+			and TTF.OUT_TRADE_NO like '%'||#{outTradeNo}||'%'
+			</if>
+			<if test="tradeStatus!=null and tradeStatus!=''">
+			and TTF.TRADE_STATUS = #{tradeStatus}
+			</if>
+			<if test="transType!=null and transType!=''">
+			and TTF.TRANS_TYPE = #{transType}
+			</if>
+			
+		
+		</where>
+	</select>
 </mapper>

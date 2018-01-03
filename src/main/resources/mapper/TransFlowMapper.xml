@@ -4,11 +4,9 @@
 <mapper namespace="com.sunyard.itp.mapper.TransFlowMapper">
 	<insert id="addTransFlow" parameterType="TransFlow">
 		insert into TBL_TRANS_FLW
-		(TRADE_NO,OUT_TRADE_NO,BUYER_LOGON_ID,TRADE_STATUS,TOTAL_AMOUNT,RECEIPT_AMOUNT,SEND_PAY_DATE,
-		BUYER_USER_ID,TRANS_TYPE,PAY_MODEL,BROADCAST)
+		(TRADE_NO,OUT_TRADE_NO,BUYER_LOGON_ID,TRADE_STATUS,TOTAL_AMOUNT,RECEIPT_AMOUNT,SEND_PAY_DATE,BUYER_USER_ID,TRANS_TYPE,PAY_MODEL,BROADCAST)
 		values
-		(#{tradeNo},#{outTradeNo},#{buyerLogonId},#{tradeStatus},#{totalAmount},#{receiptAmount},#{sendPayDate}
-		,#{buyerUserId},#{transType},#{payModel},#{broadcast})
+		(#{tradeNo},#{outTradeNo},#{buyerLogonId},#{tradeStatus},#{totalAmount},#{receiptAmount},#{sendPayDate},#{buyerUserId},#{transType},#{payModel},#{broadcast})
 	</insert>
 	
 	<select id="queryTransFlow" parameterType="TransFlow" resultType="int">
@@ -21,8 +19,17 @@
 		TRADE_NO=#{tradeNo},BUYER_LOGON_ID=#{buyerLogonId},TRADE_STATUS=#{tradeStatus},RECEIPT_AMOUNT=#{receiptAmount},
 		TOTAL_AMOUNT=#{totalAmount},SEND_PAY_DATE=#{sendPayDate},BUYER_USER_ID=#{buyerUserId}
 		where
-		OUT_TRADE_NO = #{outTradeNo}
+		OUT_TRADE_NO = #{outTradeNo} 
 	</update>
 	
+	
+	<select id="broadcast" resultType="com.sunyard.itp.entity.Broadcast">
+		SELECT OUT_TRADE_NO,TRANS_TYPE,RECEIPT_AMOUNT FROM TBL_TRANS_FLW 
+		WHERE BROADCAST = '01' AND TRADE_STATUS = '00'
+	</select>
+	<update id="setBroadcasted" parameterType="String">
+		update TBL_TRANS_FLW set
+		BROADCAST ='00' WHERE OUT_TRADE_NO = #{outTradeNo}
+	</update>
 
 </mapper>

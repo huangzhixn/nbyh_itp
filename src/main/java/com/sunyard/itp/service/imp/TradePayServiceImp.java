@@ -93,6 +93,7 @@ public class TradePayServiceImp implements TradePayService{
 			transFlow.setTotalAmount(response.getTotalAmount());
 			transFlow.setReceiptAmount(response.getReceiptAmount());
 			transFlow.setPayModel("0");
+			transFlow.setBroadcast("02");
 			DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			String date = df.format(new Date());
 			transFlow.setSendPayDate(date);
@@ -143,12 +144,14 @@ public class TradePayServiceImp implements TradePayService{
 				//不在公司环境，连接不上数据库
 //				transFlowService.addTransFlow(transFlow);
 				//return "支付成功！";
+				logger.debug("1111111");
+				transFlowService.addTransFlow(transFlow);
+				logger.debug("222222");
 				} else {
 				logger.debug("调用失败");
 				transFlow.setTradeStatus("02");
 				message.setPayStatu("02");
 			}
-			transFlowService.addTransFlow(transFlow);
 			return message;
 		}else if(auth_code.startsWith("10") || auth_code.startsWith("11") || auth_code.startsWith("12") || auth_code.startsWith("13") || auth_code.startsWith("14") || auth_code.startsWith("15")){
 			logger.debug("微信支付");
@@ -182,6 +185,7 @@ public class TradePayServiceImp implements TradePayService{
 		 			transFlow.setBuyerUserId(r.get("openid"));
 		 			transFlow.setTransType("1");
 		 			transFlow.setPayModel("3");
+		 			transFlow.setBroadcast("02");
 	             //如果成功 插入流水
 	             if(r.get("result_code").equals("SUCCESS")){
 		                      

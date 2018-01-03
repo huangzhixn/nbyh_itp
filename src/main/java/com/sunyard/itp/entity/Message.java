@@ -4,7 +4,7 @@ public class Message {
 	private String payType;//0-支付宝，1-微信 2-银联
 	private String amount; //支付金额
 	private String payStatu;//支付状态  00-支付成功  01-正在输入密码支付，请确认 02-支付失败 03-未付款交易超时关闭，或支付完成后全额退款 04-交易结束，不可退款
-							//05 -未支付  06- 转入退款 07-已关闭
+							//05 -未支付  06- 转入退款 07-已关闭  08-已撤销 09- 支付失败，其他原因
 	private String buyer;   //支付id
 	private String out_trade_no;
 	
@@ -43,6 +43,10 @@ public class Message {
 			return "转入退款";
 		case "07":
 			return "已关闭";
+		case "08":
+			return "已撤销";
+		case "09":
+			return "支付失败，其他原因";
 		default:
 			return "";
 		}	

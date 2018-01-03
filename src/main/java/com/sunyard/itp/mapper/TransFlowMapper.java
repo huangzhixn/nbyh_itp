@@ -2,6 +2,9 @@ package com.sunyard.itp.mapper;
 
 
 
+import java.util.List;
+
+import com.sunyard.itp.entity.Broadcast;
 import com.sunyard.itp.entity.TransFlow;
 
 public interface TransFlowMapper {
@@ -10,4 +13,8 @@ public interface TransFlowMapper {
 	int queryTransFlow(TransFlow transFlow);
 
 	void updateTrade(TransFlow trans);
+
+	List<Broadcast> broadcast();
+
+	void setBroadcasted(String outTradeNo);
 }

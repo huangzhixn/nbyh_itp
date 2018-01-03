@@ -47,8 +47,7 @@ public class notifyController {
 	
 	protected Logger logger = LoggerFactory.getLogger(getClass());
 	@RequestMapping("/aliNotify")
-	@ResponseBody
-	public String notify(HttpServletRequest request,HttpServletResponse response) throws IOException{
+	public void notify(HttpServletRequest request,HttpServletResponse response) throws IOException{
 //		Map<String, String> paramsMap = ... //将异步通知中收到的待验证所有参数都存放到map中
 //			boolean signVerified = AlipaySignature.rsaCheckV1(paramsMap, ALIPAY_PUBLIC_KEY, CHARSET) //调用SDK验证签名
 //			if(signVerfied){
@@ -111,13 +110,13 @@ public class notifyController {
 	              trans.setBuyerUserId(seller_id);
 	              trans.setTradeStatus("00");
 	              trans.setPayModel("1");
-	              trans.setTransType("1");
+	              trans.setTransType("0");
 	              trans.setBroadcast("01");
 	              //更新数据库v
 	              transFlowService.addTransFlow(trans);;
 	              
-//	              out.println("success"); //请不要修改或删除  ,返回给支付宝
-	        	return "success";
+ 	              out.println("success"); //请不要修改或删除  ,返回给支付宝
+//	        	return "success";
 	        } else {  
 //	        	 TransFlow trans = new TransFlow();
 //	              trans.setTradeNo(trade_no);
@@ -135,8 +134,8 @@ public class notifyController {
 //	              //更新数据库v
 //	              transFlowService.addTransFlow(trans);;
 	        	
-//	            out.println("success"); //请不要修改或删除  
-	              return "fail";
+	            out.println("success"); //请不要修改或删除  
+//	              return "fail";
 	        }  
 	  
 	        //——请根据您的业务逻辑来编写程序（以上代码仅作参考）——  

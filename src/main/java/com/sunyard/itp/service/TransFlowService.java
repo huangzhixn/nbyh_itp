@@ -1,7 +1,9 @@
 package com.sunyard.itp.service;
 
+import java.util.List;
 import java.util.Map;
 
+import com.sunyard.itp.entity.Broadcast;
 import com.sunyard.itp.entity.TransFlow;
 
 /**
@@ -16,5 +18,7 @@ public interface TransFlowService {
 	int queryTransFlow(Map<String, String> params);
 
 	void updateTrade(TransFlow trans);
+
+	List<Broadcast> broadcast(String mchntCd);
 	
 }

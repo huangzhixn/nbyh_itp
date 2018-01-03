@@ -1,15 +1,16 @@
 package com.sunyard.itp.entity;
 
 public class TransFlow {
-	private String tradeNo;
-	private String outTradeNo;
-	private String buyerLogonId;
+	private String tradeNo;//原渠道订单号
+	private String outTradeNo;//商户订单号
+	private String buyerLogonId;//买家登录
 	private String tradeStatus;//支付状态  00-支付成功  01-正在输入密码支付，请确认 02-支付失败03-未付款交易超时关闭，或支付完成后全额退款 04-交易结束，不可退款
+								////05 -未支付  06- 转入退款 07-已关闭  08-已撤销 09- 支付失败，其他原因
 	private String totalAmount;
-	private String receiptAmount;
-	private String sendPayDate;
-	private String buyerUserId;
-	private String transType;
+	private String receiptAmount;//支付金额
+	private String sendPayDate;//订单发送时间
+	private String buyerUserId;//买家
+	private String transType;//0-支付宝，1-微信 2-银联
 	
 	/*支付方式 
 	 * 0 -支付宝客户被扫 1 -支付宝客户主扫（动态码） 2-支付宝客户主扫（静态码）
@@ -19,8 +20,22 @@ public class TransFlow {
 	private String payModel;//支付方式   
 	
 	
-	private String broadcast;//语音播报   00-已播报  01-未播报
+	private String broadcast;//语音播报   00-已播报  01-未播报  02-无需播报
 	
+	public String getTransTypeName(){
+		if(transType == null || transType == "")
+			return "";
+		switch (transType) {
+		case "0":
+			return "支付宝";
+		case "1":
+			return "微信";
+		case "2":
+			return "银联";
+		default:
+			return "";
+		}
+		}	
 	public String getBroadcastName(){
 		if(tradeStatus == null || tradeStatus == "")
 			return "";
@@ -29,6 +44,8 @@ public class TransFlow {
 			return "已播报";
 		case "01":
 			return "未播报";
+		case "02":
+			return "不需要播报";
 		default:
 			return "";
 		}	
@@ -53,6 +70,12 @@ public class TransFlow {
 			return "转入退款";
 		case "07":
 			return "已关闭";
+		case "08":
+			return "已撤销";
+		case "09":
+			return "支付失败，其他原因";
+		case "10":
+			return "已退款";
 		default:
 			return "";
 		}

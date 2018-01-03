@@ -1,11 +1,13 @@
 package com.sunyard.itp.service.imp;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.sunyard.itp.entity.Broadcast;
 import com.sunyard.itp.entity.TransFlow;
 import com.sunyard.itp.mapper.TransFlowMapper;
 import com.sunyard.itp.service.TransFlowService;
@@ -18,12 +20,14 @@ import com.sunyard.itp.service.TransFlowService;
  *
  */
 @Service
+@Transactional(rollbackFor=Exception.class)
 public class TransFlowServiceImp implements TransFlowService {
 	@Autowired
 	private TransFlowMapper transFlowMapper;
 	
-	@Transactional
+	
 	public void addTransFlow(TransFlow transFlow) {
+		System.out.println("33333333333333333333333");
 		transFlowMapper.addTransFlow(transFlow);
 		
 	}
@@ -37,6 +41,14 @@ public class TransFlowServiceImp implements TransFlowService {
 	public void updateTrade(TransFlow trans) {
 		transFlowMapper.updateTrade(trans);
 		
+	}
+	@Override
+	public List<Broadcast> broadcast(String mchntCd) {
+		List<Broadcast> broadcast = transFlowMapper.broadcast();
+		for(Broadcast br :broadcast){
+			transFlowMapper.setBroadcasted(br.getOutTradeNo());
+		}
+		return broadcast;
 	}
 
 }
