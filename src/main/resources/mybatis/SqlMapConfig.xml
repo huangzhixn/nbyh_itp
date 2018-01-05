@@ -10,6 +10,7 @@
 	</settings>
 	<typeAliases>
 		<typeAlias type="com.sunyard.itp.entity.TransFlow" alias="TransFlow" />
+		<typeAlias type="com.sunyard.itp.dto.TransFlowDto" alias="TransFlowDto" />
 		</typeAliases>
 	<!-- 扫描分页 -->
 	<plugins>

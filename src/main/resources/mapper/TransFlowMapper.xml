@@ -31,5 +31,10 @@
 		update TBL_TRANS_FLW set
 		BROADCAST ='00' WHERE OUT_TRADE_NO = #{outTradeNo}
 	</update>
+	
+	<update id="updateReStatu" parameterType="String">
+		update TBL_TRANS_FLW set
+		TRADE_STATUS ='10' WHERE OUT_TRADE_NO = #{out_trade_no}
+	</update>
 
 </mapper>

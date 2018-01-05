@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import com.sunyard.itp.entity.TransFlow;
 import com.sunyard.itp.service.QueryOrderService;
 import com.sunyard.itp.service.TradePayService;
 import com.sunyard.itp.service.TransFlowService;
+import com.sunyard.itp.utils.DateUtil;
 import com.sunyard.itp.utils.union.AcpService;
 import com.sunyard.itp.utils.union.DemoBase;
 import com.sunyard.itp.utils.union.LogUtil;
@@ -167,12 +169,20 @@ public class TradePayServiceImp implements TradePayService{
 //			data.put("notify_url",PayConst.WX_NOTIFY_URL);
 			data.put("body","微信主扫测试");
 	    	data.put("out_trade_no", out_trade_no);
-	    	data.put("total_fee", totalFee.toString());
+	    	String totalFee1 = totalFee.toString();
+	    	 Double totalFee2 = Double.parseDouble(totalFee1) * 100;
+	    	 int totalFee3 = (new   Double(totalFee2)).intValue();  
+	    	 logger.debug("------"+ String.valueOf(totalFee3));
+	    	data.put("total_fee", String.valueOf(totalFee3));
 	    	data.put("spbill_create_ip", "172.16.17.18");
 	    	data.put("auth_code", auth_code);
 	             Map<String, String> r = wxpay.microPay(data);
 	             logger.debug(r.toString());
-	             message.setAmount(r.get("total_fee"));
+	     
+	             String amoubt = r.get("total_fee");
+	             double b = (Double.parseDouble(amoubt)) / 100;
+	 			String bb = Double.toString(b);
+	             message.setAmount(bb);
             	 message.setBuyer(r.get("openid"));
             	 TransFlow transFlow = new TransFlow();
 		 			transFlow.setTradeNo(r.get("transaction_id"));
@@ -181,8 +191,8 @@ public class TradePayServiceImp implements TradePayService{
 		 			//支付状态  00-支付成功  01-正在输入密码支付，请确认 02-支付失败
 //		 			transFlow.setTradeStatus(r.get("00"));
 		 			transFlow.setTotalAmount(r.get("total_fee"));
-		 			transFlow.setReceiptAmount(r.get("settlement_total_fee"));
-		 			transFlow.setSendPayDate(r.get("time_end"));
+		 			transFlow.setReceiptAmount(r.get("total_fee"));
+		 			transFlow.setSendPayDate(DateUtil.dateformat(r.get("time_end")));
 		 			transFlow.setBuyerUserId(r.get("openid"));
 		 			transFlow.setMchntNo(r.get("mch_id"));
 		 			transFlow.setTransType("1");

@@ -1,6 +1,6 @@
-package com.sunyard.itp.entity;
+package com.sunyard.itp.dto;
 
-public class TransFlow {
+public class TransFlowDto {
 	private String tradeNo;//原渠道订单号
 	private String outTradeNo;//商户订单号
 	private String buyerLogonId;//买家登录
@@ -137,14 +137,40 @@ public class TransFlow {
 	public void setTradeStatus(String tradeStatus) {
 		this.tradeStatus = tradeStatus;
 	}
+	public String getTotalAmount1() {
+		if(totalAmount != null && totalAmount != ""){
+			double b = (Double.parseDouble(totalAmount)) / 100;
+			String bb = Double.toString(b);
+			if(transType.equals("1"))
+				return bb;
+			return totalAmount;
+			}else{
+				return "";
+			}
+	}
 	public String getTotalAmount() {
-		return totalAmount;
+		
+			return totalAmount;
+		
 	}
 	public void setTotalAmount(String totalAmount) {
 		this.totalAmount = totalAmount;
 	}
+	public String getReceiptAmount1() {
+		if(receiptAmount != null && receiptAmount != ""){
+			double b = (Double.parseDouble(receiptAmount)) / 100;
+			String bb = Double.toString(b);
+			if(transType.equals("1"))
+				return bb;
+			return receiptAmount;
+			}else{
+				return "";
+			}
+	}
 	public String getReceiptAmount() {
-		return receiptAmount;
+		
+			return receiptAmount;
+			
 	}
 	public void setReceiptAmount(String receiptAmount) {
 		this.receiptAmount = receiptAmount;
@@ -179,6 +205,5 @@ public class TransFlow {
 	public void setMchntNo(String mchntNo) {
 		this.mchntNo = mchntNo;
 	}
-
 	
 }

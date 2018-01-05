@@ -14,8 +14,8 @@ import com.alipay.api.request.AlipayTradeRefundRequest;
 import com.alipay.api.response.AlipayTradeRefundResponse;
 import com.sunyard.itp.constant.PayConst;
 import com.sunyard.itp.entity.RefundParams;
+import com.sunyard.itp.mapper.TransFlowMapper;
 import com.sunyard.itp.service.RefundService;
-import com.sunyard.itp.service.TransFlowService;
 import com.sunyard.itp.utils.wxpay.WXPay;
 import com.sunyard.itp.utils.wxpay.WXPayConfigImpl;
 
@@ -29,7 +29,7 @@ import com.sunyard.itp.utils.wxpay.WXPayConfigImpl;
 @Service
 public class RefundServiceImp implements RefundService{
 	@Autowired
-	private TransFlowService transFlowService;
+	private TransFlowMapper transFlowMapper;
 	
 	protected Logger logger = LoggerFactory.getLogger(RefundServiceImp.class);
 	@Override
@@ -57,7 +57,7 @@ public class RefundServiceImp implements RefundService{
 				logger.info("支付宝退款返回参数:"+response.getBody());
 				//修改数据库流水
 				//增加一条退款流水
-				
+				transFlowMapper.updateReStatu(out_trade_no);
 				
 				return "支付宝退款成功";
 			} else {
@@ -65,7 +65,7 @@ public class RefundServiceImp implements RefundService{
 				logger.info("支付宝退款返回参数:"+response.getBody());
 				return "支付宝退款失败";
 			}
-		}else if(refundParams.getOutTradeNo().startsWith("weixin")){
+		}else if(refundParams.getOutTradeNo().startsWith("weixin") || refundParams.getOutTradeNo().startsWith("wxpay")){
 			logger.info("进入微信退款");
 			String out_refund_no = "weixin-ref" + System.currentTimeMillis()
 		    + (long) (Math.random() * 10000000L);
@@ -83,6 +83,8 @@ public class RefundServiceImp implements RefundService{
 				WXPay wxpay = new WXPay(config);
 	            Map<String, String> r = wxpay.refund(data);
 	            logger.info("微信退款返回参数是："+r.toString());
+	            transFlowMapper.updateReStatu(out_trade_no);
+	            return "微信退款成功";
 	        } catch (Exception e) {
 	            logger.debug(e.getMessage());
 	            return "微信退款失败";
@@ -90,7 +92,7 @@ public class RefundServiceImp implements RefundService{
 	        //进入数据库操作流水
 
 			
-			return "微信退款成功";
+			
 		}else{
 			logger.info("错误的退款参数！");
 			return "退款失败";

@@ -43,10 +43,10 @@
                    function(res){       
                        if(res.err_msg == "get_brand_wcpay_request:ok" ) {                             
                            alert("支付成功");  
-                           window.location="${pageContext.request.contextPath }/toPay.action";
+//                            window.location="${pageContext.request.contextPath }/toPay.action";
                        }else if("get_brand_wcpay_request:cancel"){
                     	   alert("已取消支付");  
-                           window.location="${pageContext.request.contextPath }/toPay.action";
+//                            window.location="${pageContext.request.contextPath }/toPay.action";
                        }               
                        else{
                     	   alert(res);

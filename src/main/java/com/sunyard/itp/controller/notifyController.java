@@ -30,6 +30,7 @@ import com.sunyard.itp.entity.WxPerParams;
 import com.sunyard.itp.service.PrecreateService;
 import com.sunyard.itp.service.TransFlowService;
 import com.sunyard.itp.service.imp.PrecreateServiceImp;
+import com.sunyard.itp.utils.DateUtil;
 import com.sunyard.itp.utils.wxpay.HttpUtil;
 import com.sunyard.itp.utils.wxpay.PayCommonUtil;
 import com.sunyard.itp.utils.wxpay.Util;
@@ -183,8 +184,8 @@ public class notifyController {
 			//支付状态  00-支付成功  01-正在输入密码支付，请确认 02-支付失败
 //			transFlow.setTradeStatus(r.get("00"));
 			transFlow.setTotalAmount(newMap.get("total_fee"));
-			transFlow.setReceiptAmount(newMap.get("settlement_total_fee"));
-			transFlow.setSendPayDate(newMap.get("time_end"));
+			transFlow.setReceiptAmount(newMap.get("total_fee"));
+			transFlow.setSendPayDate(DateUtil.dateformat(newMap.get("time_end")));
 			transFlow.setBuyerUserId(newMap.get("openid"));
 			transFlow.setMchntNo(newMap.get("mch_id"));
 			transFlow.setTransType("1");

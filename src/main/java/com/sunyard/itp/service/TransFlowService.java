@@ -20,5 +20,5 @@ public interface TransFlowService {
 	void updateTrade(TransFlow trans);
 
 	List<Broadcast> broadcast(String mchntCd);
-	
+
 }

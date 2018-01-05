@@ -66,7 +66,7 @@ form{
 
         <input placeholder="买家支付授权码" type="text"  name="authCode" id="authCode" /><br /><br />
 
-        <input placeholder="支付金额" type="number"  name="totalFee" id="totalFee" /><br /><br /><br />
+        <input placeholder="支付金额" type="number" step="0.01" name="totalFee" id="totalFee" /><br /><br /><br />
 		<div align="center">
 			<input id="submit" type="submit" value="结算"  />
 		</div>

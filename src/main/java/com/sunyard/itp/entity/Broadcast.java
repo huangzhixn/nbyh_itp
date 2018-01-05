@@ -26,7 +26,15 @@ public class Broadcast {
 		this.transType = transType;
 	}
 	public String getReceiptAmount() {
-		return receiptAmount;
+		if(receiptAmount != null && receiptAmount != ""){
+			double b = (Double.parseDouble(receiptAmount)) / 100;
+			String bb = Double.toString(b);
+			if(transType.equals("1"))
+				return bb;
+			return receiptAmount;
+			}else{
+				return "";
+			}
 	}
 	public void setReceiptAmount(String receiptAmount) {
 		this.receiptAmount = receiptAmount;

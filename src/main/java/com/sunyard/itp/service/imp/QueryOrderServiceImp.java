@@ -15,6 +15,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.sunyard.itp.constant.PayConst;
 import com.sunyard.itp.controller.PayController;
+import com.sunyard.itp.dto.TransFlowDto;
 import com.sunyard.itp.entity.DataGrid;
 import com.sunyard.itp.entity.Message;
 import com.sunyard.itp.entity.TransFlow;
@@ -150,7 +151,7 @@ public class QueryOrderServiceImp implements QueryOrderService{
 				transFlow.setBuyerLogonId(wxresp.get("openid"));
 				transFlow.setBuyerUserId(wxresp.get("openid"));
 				transFlow.setTotalAmount(wxresp.get("total_fee"));
-				transFlow.setReceiptAmount(wxresp.get("settlement_total_fee"));
+				transFlow.setReceiptAmount(wxresp.get("total_fee"));
 				transFlow.setSendPayDate(DateUtil.dateformat(wxresp.get("time_end")));
 				transFlow.setTradeNo(wxresp.get("transaction_id"));
 				message.setPayStatu("00");
@@ -159,8 +160,8 @@ public class QueryOrderServiceImp implements QueryOrderService{
 				transFlow.setBuyerLogonId(wxresp.get("openid"));
 				transFlow.setBuyerUserId(wxresp.get("openid"));
 				transFlow.setTotalAmount(wxresp.get("total_fee"));
-				transFlow.setReceiptAmount(wxresp.get("settlement_total_fee"));
-				transFlow.setSendPayDate(wxresp.get("time_end"));
+				transFlow.setReceiptAmount(wxresp.get("total_fee"));
+				transFlow.setSendPayDate(DateUtil.dateformat(wxresp.get("time_end")));
 				transFlow.setTradeNo(wxresp.get("transaction_id"));
 				message.setPayStatu("01");
 			}else if(wxresp.get("return_code").equals("SUCCESS") && wxresp.get("trade_state").equals("NOTPAY")){
@@ -169,8 +170,8 @@ public class QueryOrderServiceImp implements QueryOrderService{
 				transFlow.setBuyerLogonId(wxresp.get("openid"));
 				transFlow.setBuyerUserId(wxresp.get("openid"));
 				transFlow.setTotalAmount(wxresp.get("total_fee"));
-				transFlow.setReceiptAmount(wxresp.get("settlement_total_fee"));
-				transFlow.setSendPayDate(wxresp.get("time_end"));
+				transFlow.setReceiptAmount(wxresp.get("total_fee"));
+				transFlow.setSendPayDate(DateUtil.dateformat(wxresp.get("time_end")));
 				transFlow.setTradeNo(wxresp.get("transaction_id"));
 				message.setPayStatu("05");
 			}else if(wxresp.get("return_code").equals("SUCCESS") && wxresp.get("trade_state").equals("REFUND")){
@@ -179,8 +180,8 @@ public class QueryOrderServiceImp implements QueryOrderService{
 				transFlow.setBuyerLogonId(wxresp.get("openid"));
 				transFlow.setBuyerUserId(wxresp.get("openid"));
 				transFlow.setTotalAmount(wxresp.get("total_fee"));
-				transFlow.setReceiptAmount(wxresp.get("settlement_total_fee"));
-				transFlow.setSendPayDate(wxresp.get("time_end"));
+				transFlow.setReceiptAmount(wxresp.get("total_fee"));
+				transFlow.setSendPayDate(DateUtil.dateformat(wxresp.get("time_end")));
 				transFlow.setTradeNo(wxresp.get("transaction_id"));
 				message.setPayStatu("06");
 			}else if(wxresp.get("return_code").equals("SUCCESS") && wxresp.get("trade_state").equals("CLOSED")){
@@ -189,8 +190,8 @@ public class QueryOrderServiceImp implements QueryOrderService{
 				transFlow.setBuyerLogonId(wxresp.get("openid"));
 				transFlow.setBuyerUserId(wxresp.get("openid"));
 				transFlow.setTotalAmount(wxresp.get("total_fee"));
-				transFlow.setReceiptAmount(wxresp.get("settlement_total_fee"));
-				transFlow.setSendPayDate(wxresp.get("time_end"));
+				transFlow.setReceiptAmount(wxresp.get("total_fee"));
+				transFlow.setSendPayDate(DateUtil.dateformat(wxresp.get("time_end")));
 				transFlow.setTradeNo(wxresp.get("transaction_id"));
 				message.setPayStatu("07");
 			}else if(wxresp.get("return_code").equals("SUCCESS") && wxresp.get("trade_state").equals("REVOKED")){
@@ -199,8 +200,8 @@ public class QueryOrderServiceImp implements QueryOrderService{
 				transFlow.setBuyerLogonId(wxresp.get("openid"));
 				transFlow.setBuyerUserId(wxresp.get("openid"));
 				transFlow.setTotalAmount(wxresp.get("total_fee"));
-				transFlow.setReceiptAmount(wxresp.get("settlement_total_fee"));
-				transFlow.setSendPayDate(wxresp.get("time_end"));
+				transFlow.setReceiptAmount(wxresp.get("total_fee"));
+				transFlow.setSendPayDate(DateUtil.dateformat(wxresp.get("time_end")));
 				transFlow.setTradeNo(wxresp.get("transaction_id"));
 				message.setPayStatu("08");
 			}else if(wxresp.get("return_code").equals("SUCCESS") && wxresp.get("trade_state").equals("PAYERROR")){
@@ -209,8 +210,8 @@ public class QueryOrderServiceImp implements QueryOrderService{
 				transFlow.setBuyerLogonId(wxresp.get("openid"));
 				transFlow.setBuyerUserId(wxresp.get("openid"));
 				transFlow.setTotalAmount(wxresp.get("total_fee"));
-				transFlow.setReceiptAmount(wxresp.get("settlement_total_fee"));
-				transFlow.setSendPayDate(wxresp.get("time_end"));
+				transFlow.setReceiptAmount(wxresp.get("total_fee"));
+				transFlow.setSendPayDate(DateUtil.dateformat(wxresp.get("time_end")));
 				transFlow.setTradeNo(wxresp.get("transaction_id"));
 				message.setPayStatu("10");
 			}
@@ -225,15 +226,15 @@ public class QueryOrderServiceImp implements QueryOrderService{
 		return message;
 	}
 	@Override
-	public DataGrid<TransFlow> queryTransFlw(TransFlow transFlow,IPage ipage) {
+	public DataGrid<TransFlowDto> queryTransFlw(TransFlow transFlow,IPage ipage) {
 		 // 设置分页信息
         PageHelper.startPage(ipage.getPageNo(), ipage.getPageSize());
         //查询数据
-		List<TransFlow> transFlows=queryOrderMapper.findAllDatas(transFlow);	
+		List<TransFlowDto> transFlows=queryOrderMapper.findAllDatas(transFlow);	
 		// 取分页信息
-        PageInfo<TransFlow> pageInfo = new PageInfo<>(transFlows);
+        PageInfo<TransFlowDto> pageInfo = new PageInfo<>(transFlows);
         // 设置返回结果
-        DataGrid<TransFlow> dataGrid = new DataGrid<>();
+        DataGrid<TransFlowDto> dataGrid = new DataGrid<>();
         long total = pageInfo.getTotal();
         dataGrid.setTotal(new Long(total).intValue());
         dataGrid.setRows(transFlows);

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sunyard.itp.constant.CommonConst;
+import com.sunyard.itp.dto.TransFlowDto;
 import com.sunyard.itp.entity.DataGrid;
 import com.sunyard.itp.entity.Message;
 import com.sunyard.itp.entity.TransFlow;
@@ -47,7 +48,7 @@ public class QueryOrderController {
 		if(transFlow == null){
 			transFlow = new TransFlow();
 		 }
-		DataGrid<TransFlow> dataGrid=null;
+		DataGrid<TransFlowDto> dataGrid=null;
 		
 		try {
 			IPage ipage = new IPage(page,rows);

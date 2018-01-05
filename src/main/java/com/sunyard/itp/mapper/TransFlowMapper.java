@@ -17,4 +17,6 @@ public interface TransFlowMapper {
 	List<Broadcast> broadcast();
 
 	void setBroadcasted(String outTradeNo);
+
+	void updateReStatu(String out_trade_no);
 }
