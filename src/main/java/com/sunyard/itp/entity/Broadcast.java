@@ -29,9 +29,9 @@ public class Broadcast {
 		if(receiptAmount != null && receiptAmount != ""){
 			double b = (Double.parseDouble(receiptAmount)) / 100;
 			String bb = Double.toString(b);
-			if(transType.equals("1"))
+//			if(transType.equals("1"))
 				return bb;
-			return receiptAmount;
+//			return receiptAmount;
 			}else{
 				return "";
 			}

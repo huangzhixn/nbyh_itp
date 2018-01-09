@@ -92,8 +92,16 @@ public class TradePayServiceImp implements TradePayService{
 			transFlow.setOutTradeNo(out_trade_no);
 			transFlow.setBuyerLogonId(response.getBuyerLogonId());
 //			transFlow.setTradeStatus(response.getTradeStatus());
-			transFlow.setTotalAmount(response.getTotalAmount());
-			transFlow.setReceiptAmount(response.getReceiptAmount());
+			double total = (Double.parseDouble(response.getTotalAmount()))*100;
+			String total1 =(int)total+""; 
+			transFlow.setTotalAmount(total1);
+			
+			double receipt = (Double.parseDouble(response.getReceiptAmount()))*100;
+			String receipt1 =(int)receipt+""; 
+			transFlow.setReceiptAmount(receipt1);
+			
+//			transFlow.setTotalAmount(response.getTotalAmount());
+//			transFlow.setReceiptAmount(response.getReceiptAmount());
 			transFlow.setMchntNo(PayConst.APP_ID);
 			transFlow.setPayModel("0");
 			transFlow.setBroadcast("02");

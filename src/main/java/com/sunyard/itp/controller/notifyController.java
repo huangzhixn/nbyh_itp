@@ -103,8 +103,14 @@ public class notifyController {
 	        	  TransFlow trans = new TransFlow();
 	        	  trans.setTradeNo(trade_no);
 	              trans.setOutTradeNo(order_no);
-	              trans.setTotalAmount(total_fee);
-	              trans.setReceiptAmount(total_fee);
+	             //金额乘以100 存入数据库
+	              double total = (Double.parseDouble(total_fee))*100;
+	  			  String total1 =(int)total+""; 
+	  			  trans.setTotalAmount(total1);
+	  			  trans.setReceiptAmount(total1);
+	  			
+//	              trans.setTotalAmount(total_fee);
+//	              trans.setReceiptAmount(total_fee);
 	              trans.setSendPayDate(gmt_payment);
 	              trans.setBuyerLogonId(buyer_email);
 	              trans.setMchntNo(PayConst.APP_ID);

@@ -38,9 +38,9 @@ public class TransFlowDto {
 		}
 		}	
 	public String getBroadcastName(){
-		if(tradeStatus == null || tradeStatus == "")
+		if(broadcast == null || broadcast == "")
 			return "";
-		switch (tradeStatus) {
+		switch (broadcast) {
 		case "00":
 			return "已播报";
 		case "01":
@@ -140,18 +140,24 @@ public class TransFlowDto {
 	public String getTotalAmount1() {
 		if(totalAmount != null && totalAmount != ""){
 			double b = (Double.parseDouble(totalAmount)) / 100;
-			String bb = Double.toString(b);
-			if(transType.equals("1"))
+			String bb =  Double.toString(b);
+//			if(transType.equals("1"))
 				return bb;
-			return totalAmount;
+//			return totalAmount;
 			}else{
 				return "";
 			}
 	}
 	public String getTotalAmount() {
-		
+		if(totalAmount != null && totalAmount != ""){
+			double b = (Double.parseDouble(totalAmount)) / 100;
+			String bb = Double.toString(b);
+			if(transType.equals("0"))
+				return bb;
 			return totalAmount;
-		
+			}else{
+				return "";
+			}
 	}
 	public void setTotalAmount(String totalAmount) {
 		this.totalAmount = totalAmount;
@@ -159,18 +165,24 @@ public class TransFlowDto {
 	public String getReceiptAmount1() {
 		if(receiptAmount != null && receiptAmount != ""){
 			double b = (Double.parseDouble(receiptAmount)) / 100;
-			String bb = Double.toString(b);
-			if(transType.equals("1"))
+			String bb =  Double.toString(b);
+//			if(transType.equals("1"))
 				return bb;
-			return receiptAmount;
+//			return receiptAmount;
 			}else{
 				return "";
 			}
 	}
 	public String getReceiptAmount() {
-		
+		if(receiptAmount != null && receiptAmount != ""){
+			double b = (Double.parseDouble(receiptAmount)) / 100;
+			String bb = Double.toString(b);
+			if(transType.equals("0"))
+				return bb;
 			return receiptAmount;
-			
+			}else{
+				return "";
+			}
 	}
 	public void setReceiptAmount(String receiptAmount) {
 		this.receiptAmount = receiptAmount;
