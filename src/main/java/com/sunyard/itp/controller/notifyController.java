@@ -2,18 +2,15 @@ package com.sunyard.itp.controller;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -22,22 +19,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.sunyard.itp.constant.PayConst;
 import com.sunyard.itp.entity.TransFlow;
 import com.sunyard.itp.entity.WxPerParams;
 import com.sunyard.itp.service.PrecreateService;
 import com.sunyard.itp.service.TransFlowService;
-import com.sunyard.itp.service.imp.PrecreateServiceImp;
 import com.sunyard.itp.utils.DateUtil;
 import com.sunyard.itp.utils.wxpay.HttpUtil;
 import com.sunyard.itp.utils.wxpay.PayCommonUtil;
 import com.sunyard.itp.utils.wxpay.Util;
 import com.sunyard.itp.utils.wxpay.XMLParser;
-
-
-
 
 @Controller
 public class notifyController {

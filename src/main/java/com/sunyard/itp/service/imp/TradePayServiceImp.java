@@ -42,6 +42,15 @@ import com.sunyard.itp.utils.wxpay.WXPayConfigImpl;
  */
 @Service
 public class TradePayServiceImp implements TradePayService{
+	/*static{
+		//正向代理
+	    System.setProperty("http.proxySet", "true");  
+		System.setProperty("http.proxyHost", "12.99.128.130");
+		System.setProperty("http.proxyPort", "8080");
+		
+		System.setProperty("https.proxyHost", "12.99.128.130");
+		System.setProperty("https.proxyPort", "8080");
+	}*/
 	@Autowired
 	private TransFlowService transFlowService;
 	@Autowired
@@ -59,6 +68,9 @@ public class TradePayServiceImp implements TradePayService{
 			String out_trade_no = "alipay-tra" + System.currentTimeMillis()
 		    + (long) (Math.random() * 10000000L);
 			message.setOut_trade_no(out_trade_no);
+			//正向代理
+			System.setProperty("http.proxyHost", "12.99.128.130");
+			System.setProperty("http.proxyPort", "8080");
 			AlipayClient alipayClient = new DefaultAlipayClient(PayConst.OPEN_API_DOMAIN,
 					PayConst.APP_ID,
 					PayConst.PRIVATE_KEY,
@@ -156,7 +168,7 @@ public class TradePayServiceImp implements TradePayService{
 //				transFlowService.addTransFlow(transFlow);
 				//return "支付成功！";
 				logger.debug("1111111");
-				transFlowService.addTransFlow(transFlow);
+//				transFlowService.addTransFlow(transFlow);
 				logger.debug("222222");
 				} else {
 				logger.debug("调用失败");
@@ -184,6 +196,9 @@ public class TradePayServiceImp implements TradePayService{
 	    	data.put("total_fee", String.valueOf(totalFee3));
 	    	data.put("spbill_create_ip", "172.16.17.18");
 	    	data.put("auth_code", auth_code);
+	    	//正向代理
+	    	System.setProperty("http.proxyHost", "12.99.128.130");
+			System.setProperty("http.proxyPort", "8080");
 	             Map<String, String> r = wxpay.microPay(data);
 	             logger.debug(r.toString());
 	     
@@ -259,7 +274,7 @@ public class TradePayServiceImp implements TradePayService{
 	            	  */
 	            	
 	             }
-	             transFlowService.addTransFlow(transFlow);
+//	             transFlowService.addTransFlow(transFlow);
 	             return message;
 		}else if(auth_code.startsWith("62")){
 			logger.debug("银联客户被扫");

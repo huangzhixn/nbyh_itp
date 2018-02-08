@@ -45,7 +45,16 @@ public class PrecreateServiceImp implements PrecreateService{
 	private TransFlowService transFlowService;
 	@Autowired
 	private PrecreateMapper precreateMapper;
-	
+	/*static{
+		//正向代理
+	    System.setProperty("http.proxySet", "true");  
+		System.setProperty("http.proxyHost", "12.99.128.130");
+		System.setProperty("http.proxyPort", "8080");
+		
+		System.setProperty("https.proxyHost", "12.99.128.130");
+		System.setProperty("https.proxyPort", "8080");
+	}
+	*/
 	protected Logger logger = LoggerFactory.getLogger(PrecreateServiceImp.class);
 	@Override
 	public String precreate(HttpServletRequest req , HttpServletResponse resp ,PrecreateParams payParams) throws Exception {
@@ -55,6 +64,10 @@ public class PrecreateServiceImp implements PrecreateService{
 			String out_trade_no = "alipay-pre" + System.currentTimeMillis()
 		    + (long) (Math.random() * 10000000L);
 			String totalFee = payParams.getTotalFee();
+			//正向代理
+			System.setProperty("http.proxyHost", "12.99.128.130");
+			System.setProperty("http.proxyPort", "8080");
+			
 			AlipayClient alipayClient = new DefaultAlipayClient(PayConst.OPEN_API_DOMAIN,
 					PayConst.APP_ID,
 					PayConst.PRIVATE_KEY,

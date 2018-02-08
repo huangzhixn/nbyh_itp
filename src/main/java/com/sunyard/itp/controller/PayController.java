@@ -49,6 +49,15 @@ import com.sunyard.itp.utils.wxpay.WXPayUtil;
 
 @Controller
 public class PayController {
+	/*static{
+		//正向代理
+	    System.setProperty("http.proxySet", "true");  
+		System.setProperty("http.proxyHost", "12.99.128.130");
+		System.setProperty("http.proxyPort", "8080");
+		
+		System.setProperty("https.proxyHost", "12.99.128.130");
+		System.setProperty("https.proxyPort", "8080");
+	}*/
 	@Autowired
 	private PrecreateService precreateService;
 	@Autowired
@@ -291,6 +300,9 @@ public class PayController {
         //加载微信支付参数
 		WXPayConfigImpl config =  WXPayConfigImpl.getInstance();
 		WXPay wxpay = new WXPay(config);
+		//正向代理
+		System.setProperty("http.proxyHost", "12.99.128.130");
+		System.setProperty("http.proxyPort", "8080");
         Map<String, String> r = wxpay.unifiedOrder(data);
         logger.info("微信预下单返回结果："+r.toString());
         if(r.get("result_code").equals("SUCCESS")){
