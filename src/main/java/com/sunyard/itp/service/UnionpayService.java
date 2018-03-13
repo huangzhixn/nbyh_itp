@@ -9,7 +9,7 @@ import com.sunyard.itp.entity.PrecreateParams;
 import com.sunyard.itp.entity.WxPerParams;
 
 /**
- * 支付业务类
+ * 支付业务类vvvvvvvv
  * @author zhix.huang
  *
  */
