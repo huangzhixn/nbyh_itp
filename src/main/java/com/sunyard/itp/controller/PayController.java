@@ -230,7 +230,7 @@ public class PayController {
 		//页面传递过来的参数
 		String totalFee = request.getParameter("totalFee");
 		String APPID = PayConst.WX_APP_ID;
-	    String REDIRECT_URI = "http://pay.sydtech.com.cn/wxPay/wx/wxPrecreate.action?totalFee="+totalFee;
+	    String REDIRECT_URI = "http://pay.sydtech.com.cn/nbyh_itp/wxPay/wx/wxPrecreate.action?totalFee="+totalFee;
 	    REDIRECT_URI = URLEncoder.encode(REDIRECT_URI, "UTF-8");
 	    String getCodeUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+APPID+"&redirect_uri="+REDIRECT_URI+"&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect";
 	    String code = request.getParameter("code");

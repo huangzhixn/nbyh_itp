@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="nbyh_itp:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="nbyh_itp.war">
+      <element id="artifact" artifact-name="nbyh_itp:war exploded" />
+    </root>
+  </artifact>
+</component>
