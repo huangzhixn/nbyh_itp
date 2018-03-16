@@ -49,15 +49,6 @@ import com.sunyard.itp.utils.wxpay.WXPayUtil;
 
 @Controller
 public class PayController {
-	/*static{
-		//正向代理
-	    System.setProperty("http.proxySet", "true");  
-		System.setProperty("http.proxyHost", "12.99.128.130");
-		System.setProperty("http.proxyPort", "8080");
-		
-		System.setProperty("https.proxyHost", "12.99.128.130");
-		System.setProperty("https.proxyPort", "8080");
-	}*/
 	@Autowired
 	private PrecreateService precreateService;
 	@Autowired
@@ -215,7 +206,7 @@ public class PayController {
 
 	
 	/**
-	 * 微信被扫，采用微信公众号支付接口，现货区code在换取openID在预下单获取prepayid
+	 * 微信被扫，采用微信公众号支付接口，先获取code在换取openID在预下单获取prepayid
 	 * @Description: 获取页面的code
 	 * @param request
 	 * @param response

@@ -17,7 +17,11 @@ public class BroadcastController {
 	private TransFlowService transFlowService;
 	
 	private org.slf4j.Logger logger =  LoggerFactory.getLogger(PayController.class);
-
+	/**
+	 * @Description: 语音播报轮循接口
+	 * @author zhix.huang
+	 * @date 2018/3/16 11:30
+	 */
 	@RequestMapping("broadcast")
 	@ResponseBody
 	public String broadcast(String mchntCd){

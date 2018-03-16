@@ -69,8 +69,8 @@ public class TradePayServiceImp implements TradePayService{
 		    + (long) (Math.random() * 10000000L);
 			message.setOut_trade_no(out_trade_no);
 			//正向代理
-			System.setProperty("http.proxyHost", "12.99.128.130");
-			System.setProperty("http.proxyPort", "8080");
+		/*	System.setProperty("http.proxyHost", "12.99.128.130");
+			System.setProperty("http.proxyPort", "8080");*/
 			AlipayClient alipayClient = new DefaultAlipayClient(PayConst.OPEN_API_DOMAIN,
 					PayConst.APP_ID,
 					PayConst.PRIVATE_KEY,
@@ -197,8 +197,8 @@ public class TradePayServiceImp implements TradePayService{
 	    	data.put("spbill_create_ip", "172.16.17.18");
 	    	data.put("auth_code", auth_code);
 	    	//正向代理
-	    	System.setProperty("http.proxyHost", "12.99.128.130");
-			System.setProperty("http.proxyPort", "8080");
+	/*    	System.setProperty("http.proxyHost", "12.99.128.130");
+			System.setProperty("http.proxyPort", "8080");*/
 	             Map<String, String> r = wxpay.microPay(data);
 	             logger.debug(r.toString());
 	     

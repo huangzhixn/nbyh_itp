@@ -45,6 +45,7 @@ public class TransFlowServiceImp implements TransFlowService {
 	@Override
 	public List<Broadcast> broadcast(String mchntCd) {
 		List<Broadcast> broadcast = transFlowMapper.broadcast();
+		//将该流水播报状态改为已播报
 		for(Broadcast br :broadcast){
 			transFlowMapper.setBroadcasted(br.getOutTradeNo());
 		}

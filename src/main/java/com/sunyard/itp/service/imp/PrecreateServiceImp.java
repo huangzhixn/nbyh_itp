@@ -65,8 +65,8 @@ public class PrecreateServiceImp implements PrecreateService{
 		    + (long) (Math.random() * 10000000L);
 			String totalFee = payParams.getTotalFee();
 			//正向代理
-			System.setProperty("http.proxyHost", "12.99.128.130");
-			System.setProperty("http.proxyPort", "8080");
+		/*	System.setProperty("http.proxyHost", "12.99.128.130");
+			System.setProperty("http.proxyPort", "8080");*/
 			
 			AlipayClient alipayClient = new DefaultAlipayClient(PayConst.OPEN_API_DOMAIN,
 					PayConst.APP_ID,
